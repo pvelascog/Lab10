@@ -16,7 +16,7 @@ El proyecto avanza por fases; cada una produce un documento versionado en este r
 | 2. Especificación | [`specs/001-validador-viabilidad/spec.md`](specs/001-validador-viabilidad/spec.md) | ✅ Completa |
 | 3. Clarificación | Sección "Clarificaciones" de la especificación | ✅ Sesión 2026-10-14 |
 | 4. Plan técnico | [`plan.md`](specs/001-validador-viabilidad/plan.md), [`research.md`](specs/001-validador-viabilidad/research.md), [`data-model.md`](specs/001-validador-viabilidad/data-model.md), [`contracts/api.md`](specs/001-validador-viabilidad/contracts/api.md) | ✅ Completo |
-| 5. Tareas | `specs/001-validador-viabilidad/tasks.md` | ⏳ Pendiente |
+| 5. Tareas | [`tasks.md`](specs/001-validador-viabilidad/tasks.md) – 114 tareas en 13 fases | ✅ Completo |
 | 6. Implementación | Código y pruebas | ⏳ Pendiente |
 
 ## Estructura
@@ -33,7 +33,8 @@ El proyecto avanza por fases; cada una produce un documento versionado en este r
 │       ├── plan.md              # Cómo: arquitectura, stack, pruebas, incrementos
 │       ├── research.md          # Decisiones técnicas y alternativas
 │       ├── data-model.md        # Entidades, reglas y máquina de estados
-│       └── contracts/api.md     # Contratos de la API REST
+│       ├── contracts/api.md     # Contratos de la API REST
+│       └── tasks.md             # Tareas de implementación por historia
 └── README.md
 ```
 
