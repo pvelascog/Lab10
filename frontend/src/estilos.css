@@ -268,3 +268,215 @@ label {
 .resultado.nogo {
   background: var(--nogo);
 }
+
+/* Formularios */
+select,
+textarea {
+  font: inherit;
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  color: var(--texto);
+}
+
+[aria-invalid="true"] {
+  border-color: var(--error);
+}
+
+.formulario {
+  display: grid;
+  gap: 1rem;
+}
+
+.formulario h1,
+.formulario h2,
+.formulario > p {
+  margin: 0;
+}
+
+.formulario h2 {
+  margin-top: 0.5rem;
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+a.boton {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio);
+  background: var(--primario);
+  color: var(--primario-texto);
+  text-decoration: none;
+}
+
+.encabezado-pagina {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.encabezado-pagina h1 {
+  margin: 0;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+/* Tablas */
+.tabla-contenedor {
+  overflow-x: auto;
+  padding: 0;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla th,
+.tabla td {
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla thead th {
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  font-weight: 600;
+}
+
+.tabla tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.tabla a {
+  color: var(--primario);
+}
+
+.codigo {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Estados de la iniciativa */
+.estado {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  white-space: nowrap;
+}
+
+.estado-identificada {
+  color: var(--texto-secundario);
+}
+.estado-estructurada,
+.estado-en_evaluacion,
+.estado-consolidada,
+.estado-en_comite {
+  color: var(--primario);
+  border-color: var(--primario);
+}
+.estado-decidida,
+.estado-en_seguimiento {
+  color: var(--go);
+  border-color: var(--go);
+}
+
+/* Avisos */
+.aviso {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio);
+  border: 1px solid var(--borde);
+  margin: 0 0 1rem;
+}
+
+.aviso.exito {
+  border-color: var(--go);
+}
+
+.aviso.advertencia {
+  border-color: var(--iterar);
+  background: color-mix(in srgb, var(--iterar) 10%, var(--superficie));
+}
+
+/* Datos */
+.datos {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0;
+}
+
+.datos dt {
+  color: var(--texto-secundario);
+}
+
+.datos dd {
+  margin: 0;
+}
+
+/* Selector de evaluadores */
+.selector-evaluadores {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.fila-evaluadores {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 0.5rem 0.75rem 0.75rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.fila-evaluadores legend {
+  font-weight: 600;
+  padding: 0 0.25rem;
+}
+
+.chips {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.35rem 0.15rem 0.65rem;
+  border-radius: 999px;
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+}
+
+.chip button {
+  padding: 0 0.4rem;
+  border: 0;
+  background: transparent;
+  color: var(--texto-secundario);
+  line-height: 1.2;
+}

@@ -72,3 +72,89 @@ export interface VersionMarco {
   };
   dimensiones: Dimension[];
 }
+
+export const ESTADOS = [
+  "IDENTIFICADA",
+  "ESTRUCTURADA",
+  "EN_EVALUACION",
+  "CONSOLIDADA",
+  "EN_COMITE",
+  "DECIDIDA",
+  "EN_SEGUIMIENTO",
+  "ARCHIVADA",
+] as const;
+export type EstadoIniciativa = (typeof ESTADOS)[number];
+
+export const NOMBRES_ESTADOS: Record<EstadoIniciativa, string> = {
+  IDENTIFICADA: "Identificada",
+  ESTRUCTURADA: "Estructurada",
+  EN_EVALUACION: "En evaluación",
+  CONSOLIDADA: "Consolidada",
+  EN_COMITE: "En comité",
+  DECIDIDA: "Decidida",
+  EN_SEGUIMIENTO: "En seguimiento",
+  ARCHIVADA: "Archivada",
+};
+
+export const ORIGENES = [
+  "CLIENTES",
+  "EQUIPO_INTERNO",
+  "MERCADO",
+  "SOCIOS",
+  "TENDENCIAS",
+  "PORTAFOLIO",
+  "INNOVACION_INTERNA",
+] as const;
+export type OrigenIniciativa = (typeof ORIGENES)[number];
+
+export const NOMBRES_ORIGENES: Record<OrigenIniciativa, string> = {
+  CLIENTES: "Clientes",
+  EQUIPO_INTERNO: "Equipo interno",
+  MERCADO: "Mercado",
+  SOCIOS: "Socios",
+  TENDENCIAS: "Tendencias",
+  PORTAFOLIO: "Evolución del portafolio",
+  INNOVACION_INTERNA: "Innovación interna",
+};
+
+export interface UsuarioBreve {
+  id: string;
+  nombre: string;
+}
+
+export interface IniciativaResumen {
+  id: string;
+  codigo: string;
+  nombre: string;
+  descripcion: string;
+  origen: OrigenIniciativa;
+  estado: EstadoIniciativa;
+  autor: UsuarioBreve;
+  pm: UsuarioBreve | null;
+  creado_en: string;
+}
+
+export interface Asignacion {
+  dimension: string;
+  usuario: UsuarioBreve;
+  origen: "MANUAL" | "SUGERIDA";
+}
+
+export interface IniciativaDetalle extends IniciativaResumen {
+  problema: string | null;
+  solucion_objetivo: string | null;
+  segmento: string | null;
+  propuesta_valor: string | null;
+  supuestos_clave: string[];
+  datos_disponibles: string | null;
+  inversion_estimada: number | null;
+  ingresos_esperados: number | null;
+  flujo_mensual_neto: number | null;
+  asignaciones: Asignacion[];
+  posible_duplicado_de: {
+    id: string | null;
+    codigo: string;
+    nombre: string | null;
+    similitud: number;
+  } | null;
+}

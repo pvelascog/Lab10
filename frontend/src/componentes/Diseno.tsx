@@ -12,6 +12,7 @@ interface EntradaMenu {
 // Las entradas se agregan a medida que se implementan las historias de usuario (tasks.md).
 const MENU: EntradaMenu[] = [
   { ruta: "/", texto: "Inicio" },
+  { ruta: "/iniciativas", texto: "Backlog" },
   { ruta: "/marco", texto: "Marco NEPXA" },
 ];
 

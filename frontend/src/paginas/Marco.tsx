@@ -1,18 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-
-import { api } from "../api/cliente";
-import { NOMBRES_ROLES, type VersionMarco } from "../api/tipos";
+import { useMarcoVigente } from "../api/consultas";
+import { NOMBRES_ROLES } from "../api/tipos";
 import { formatearPorcentaje } from "../utilidades/formato";
 
 export function Marco() {
-  const {
-    data: marco,
-    isPending,
-    error,
-  } = useQuery({
-    queryKey: ["marco", "vigente"],
-    queryFn: () => api<VersionMarco>("/marco/vigente"),
-  });
+  const { data: marco, isPending, error } = useMarcoVigente();
 
   if (isPending) return <p className="cargando">Cargando marco…</p>;
   if (error || !marco) return <p className="mensaje-error">No fue posible cargar el marco.</p>;

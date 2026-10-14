@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app.api import auth, marco, usuarios
+from app.api import auth, iniciativas, marco, usuarios
 from app.errores import ErrorAplicacion
 
 PREFIJO = "/api/v1"
@@ -51,5 +51,5 @@ async def salud() -> dict[str, str]:
     return {"estado": "ok"}
 
 
-for modulo in (auth, usuarios, marco):
+for modulo in (auth, usuarios, marco, iniciativas):
     app.include_router(modulo.router, prefix=PREFIJO)

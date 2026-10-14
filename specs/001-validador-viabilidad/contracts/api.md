@@ -44,8 +44,8 @@ respuestas que las pruebas de contrato verifican.
 
 | Método y ruta | Descripción | Permiso |
 |---------------|-------------|---------|
-| `GET /iniciativas?estado=&origen=&resultado=&desde=&hasta=&orden=` | Backlog visible para el usuario (FR-004, FR-027a) | autenticado |
-| `POST /iniciativas` | `{nombre, descripcion, origen, asignaciones?: [{dimension, usuario_id}]}` → 201 con `posible_duplicado_de` | autenticado |
+| `GET /iniciativas?estado=&origen=&resultado=&desde=&hasta=&orden=` | Backlog visible para el usuario (FR-004, FR-027a). `orden` ∈ `-creado_en` (por defecto), `creado_en`, `nombre`, `-nombre`. El filtro `resultado` se habilita con la consolidación (HU4) | autenticado |
+| `POST /iniciativas` | `{nombre, descripcion, origen, asignaciones?: [{dimension, usuario_id}]}` → 201 con el detalle. `posible_duplicado_de = {id, codigo, nombre, similitud}` si la similitud trigram con otra iniciativa es ≥ 0.6; `id` y `nombre` son `null` cuando el usuario no puede ver esa iniciativa | autenticado |
 | `GET /iniciativas/{id}` | Ficha, estado, asignaciones, evaluaciones | visible |
 | `PATCH /iniciativas/{id}` | Edita la ficha (solo en `IDENTIFICADA` o `ESTRUCTURADA`) | autor o PM |
 | `PUT /iniciativas/{id}/asignaciones` | Reemplaza evaluadores por dimensión | PM |

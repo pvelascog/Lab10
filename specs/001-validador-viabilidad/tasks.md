@@ -74,18 +74,18 @@
 
 ### Pruebas HU1
 
-- [ ] T030 [P] [HU1] Prueba de contrato de `POST /iniciativas` y `GET /iniciativas` en `backend/tests/contract/test_iniciativas.py`
-- [ ] T031 [P] [HU1] Prueba de integración: registro válido, campos faltantes (400 con campo), aviso de duplicado, visibilidad (FR-027a) en `backend/tests/integration/test_registro_iniciativa.py`
+- [x] T030 [P] [HU1] Prueba de contrato de `POST /iniciativas` y `GET /iniciativas` en `backend/tests/contract/test_iniciativas.py`
+- [x] T031 [P] [HU1] Prueba de integración: registro válido, campos faltantes (400 con campo), aviso de duplicado, visibilidad (FR-027a) en `backend/tests/integration/test_registro_iniciativa.py`
 
 ### Implementación HU1
 
-- [ ] T032 [P] [HU1] Modelos `iniciativa` y `asignacion_evaluador` en `backend/app/modelos/iniciativas.py` y migración
-- [ ] T033 [HU1] Esquemas Pydantic de iniciativa en `backend/app/esquemas/iniciativas.py`
-- [ ] T034 [HU1] Servicio de registro: código `INI-AAAA-NNNN`, detección de duplicados con similitud trigram ≥ 0.6, asignaciones iniciales en `backend/app/servicios/iniciativas.py`
-- [ ] T035 [HU1] Filtro de visibilidad (autor, evaluador asignado o rol de portafolio) en `backend/app/servicios/visibilidad.py`
-- [ ] T036 [HU1] Rutas `POST /iniciativas`, `GET /iniciativas`, `GET /iniciativas/{id}` en `backend/app/api/iniciativas.py`
-- [ ] T037 [P] [HU1] Página Backlog con filtros por estado, origen, resultado y fecha en `frontend/src/paginas/Backlog.tsx`
-- [ ] T038 [P] [HU1] Formulario de nueva iniciativa con selección de evaluadores por dimensión en `frontend/src/paginas/NuevaIniciativa.tsx`
+- [x] T032 [P] [HU1] Modelos `iniciativa` y `asignacion_evaluador` en `backend/app/modelos/iniciativas.py` y migración
+- [x] T033 [HU1] Esquemas Pydantic de iniciativa en `backend/app/esquemas/iniciativas.py`
+- [x] T034 [HU1] Servicio de registro: código `INI-AAAA-NNNN`, detección de duplicados con similitud trigram ≥ 0.6, asignaciones iniciales en `backend/app/servicios/iniciativas.py`
+- [x] T035 [HU1] Filtro de visibilidad (autor, evaluador asignado o rol de portafolio) en `backend/app/servicios/visibilidad.py`
+- [x] T036 [HU1] Rutas `POST /iniciativas`, `GET /iniciativas`, `GET /iniciativas/{id}` en `backend/app/api/iniciativas.py`
+- [x] T037 [P] [HU1] Página Backlog con filtros por estado, origen, resultado y fecha en `frontend/src/paginas/Backlog.tsx`
+- [x] T038 [P] [HU1] Formulario de nueva iniciativa con selección de evaluadores por dimensión en `frontend/src/paginas/NuevaIniciativa.tsx`
 
 **Punto de control**: HU1 funciona por sí sola.
 

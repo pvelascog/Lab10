@@ -79,3 +79,15 @@ async def usuario_con_sesion() -> AsyncIterator[CrearUsuario]:
     yield _crear
     for c in clientes:
         await c.aclose()
+
+
+async def id_de(c: AsyncClient) -> str:
+    """Identificador del usuario con sesión en el cliente."""
+    return str((await c.get("/api/v1/auth/yo")).json()["id"])
+
+
+IDEA = {
+    "nombre": "Portal de autogestión de reclamos",
+    "descripcion": "Plataforma para que los clientes registren y sigan sus reclamos en línea.",
+    "origen": "CLIENTES",
+}
