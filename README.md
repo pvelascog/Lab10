@@ -17,7 +17,7 @@ El proyecto avanza por fases; cada una produce un documento versionado en este r
 | 3. Clarificación | Sección "Clarificaciones" de la especificación | ✅ Sesión 2026-10-14 |
 | 4. Plan técnico | [`plan.md`](specs/001-validador-viabilidad/plan.md), [`research.md`](specs/001-validador-viabilidad/research.md), [`data-model.md`](specs/001-validador-viabilidad/data-model.md), [`contracts/api.md`](specs/001-validador-viabilidad/contracts/api.md) | ✅ Completo |
 | 5. Tareas | [`tasks.md`](specs/001-validador-viabilidad/tasks.md) – 114 tareas en 13 fases | ✅ Completo |
-| 6. Implementación | Código y pruebas | ⏳ Pendiente |
+| 6. Implementación | Código y pruebas | 🚧 Fase 1 de 13 completada |
 
 ## Estructura
 
@@ -42,3 +42,34 @@ El proyecto avanza por fases; cada una produce un documento versionado en este r
 
 Python 3.12 · FastAPI · PostgreSQL 16 · React 18 + Vite · API de Claude (benchmark con búsqueda web y recomendaciones) ·
 WeasyPrint (PDF) · Docker Compose.
+
+## Cómo ejecutar
+
+Requisitos: Docker con Docker Compose. Para desarrollo sin Docker: Python 3.12+ con [uv](https://docs.astral.sh/uv/) y Node.js 22.
+
+```bash
+cp .env.example .env          # completar JWT_SECRETO (y ANTHROPIC_API_KEY desde la Fase 7)
+docker compose up --build     # db (5432), api (8000) y web (5173)
+```
+
+- Interfaz: http://localhost:5173
+- API: http://localhost:8000/api/v1/salud · documentación en http://localhost:8000/api/v1/docs
+
+### Desarrollo y pruebas
+
+```bash
+# Backend
+cd backend
+uv sync
+uv run pytest                 # pruebas
+uv run ruff check . && uv run ruff format --check . && uv run mypy app
+uv run uvicorn app.main:app --reload
+
+# Frontend
+cd frontend
+npm install
+npm test && npm run lint && npm run typecheck
+npm run dev
+```
+
+La integración continua (`.github/workflows/ci.yml`) ejecuta estas mismas verificaciones y compila las imágenes de Docker.

@@ -1,0 +1,64 @@
+[project]
+name = "validador-viabilidad"
+version = "0.1.0"
+description = "Validador de Viabilidad de Productos basado en el Marco NEPXA v3.0"
+readme = "../README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    "sqlalchemy[asyncio]>=2.0.30",
+    "asyncpg>=0.29",
+    "alembic>=1.13",
+    "argon2-cffi>=23.1",
+    "pyjwt>=2.9",
+    "anthropic>=0.70",
+    "jinja2>=3.1",
+    "weasyprint>=62",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "hypothesis>=6.112",
+    "httpx>=0.27",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "ia_real: llama a la API real de Claude (requiere ANTHROPIC_API_KEY); excluida por defecto",
+]
+addopts = "-m 'not ia_real'"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "ASYNC", "S"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true
+
+# El motor de decisión y los cálculos financieros son lógica pura: tipado estricto (plan.md).
+[[tool.mypy.overrides]]
+module = ["app.dominio.*"]
+strict = true

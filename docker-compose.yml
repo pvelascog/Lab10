@@ -1,0 +1,59 @@
+# Entorno local del Validador de Viabilidad de Productos.
+#   docker compose up --build          → db, api y web
+#   docker compose --profile ia up     → además el trabajador de IA (desde la Fase 7)
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: validador
+      POSTGRES_PASSWORD: validador
+      POSTGRES_DB: validador
+    ports:
+      - "5432:5432"
+    volumes:
+      - datos_db:/var/lib/postgresql/data
+      - ./backend/docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U validador -d validador"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./backend
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql+asyncpg://validador:validador@db:5432/validador
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  trabajador:
+    build: ./backend
+    command: ["python", "-m", "app.trabajador"]
+    profiles: ["ia"]
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql+asyncpg://validador:validador@db:5432/validador
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+volumes:
+  datos_db:

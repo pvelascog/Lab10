@@ -20,14 +20,14 @@
 
 **Objetivo**: estructura del monorepo, herramientas y entorno local.
 
-- [ ] T001 Crear la estructura de carpetas de `backend/` y `frontend/` según `plan.md` (sección Estructura del proyecto)
-- [ ] T002 Inicializar `backend/pyproject.toml` (Python 3.12) con FastAPI, Pydantic v2, SQLAlchemy 2 async, asyncpg, Alembic, argon2-cffi, PyJWT, anthropic, Jinja2, WeasyPrint; dependencias de desarrollo: pytest, pytest-asyncio, Hypothesis, httpx, Ruff, mypy
-- [ ] T003 [P] Inicializar `frontend/` con Vite + React 18 + TypeScript, React Router, TanStack Query, Recharts; Vitest + Testing Library; ESLint + Prettier
-- [ ] T004 [P] Configurar Ruff y mypy (modo estricto en `app/dominio`) en `backend/pyproject.toml`
-- [ ] T005 [P] Crear `docker-compose.yml` con servicios `db` (PostgreSQL 16 con `pg_trgm`), `api`, `trabajador` y `web`
-- [ ] T006 [P] Crear `backend/Dockerfile` con las librerías de sistema de WeasyPrint (Pango, HarfBuzz) y `frontend/Dockerfile`
-- [ ] T007 [P] Crear `.env.example` (DATABASE_URL, JWT_SECRETO, ANTHROPIC_API_KEY, URL_FRONTEND) y `.gitignore`
-- [ ] T008 [P] Crear el flujo de integración continua `.github/workflows/ci.yml`: Ruff, mypy, pytest (con servicio PostgreSQL), Vitest y ESLint
+- [x] T001 Crear la estructura de carpetas de `backend/` y `frontend/` según `plan.md` (sección Estructura del proyecto)
+- [x] T002 Inicializar `backend/pyproject.toml` (Python 3.12) con FastAPI, Pydantic v2, SQLAlchemy 2 async, asyncpg, Alembic, argon2-cffi, PyJWT, anthropic, Jinja2, WeasyPrint; dependencias de desarrollo: pytest, pytest-asyncio, Hypothesis, httpx, Ruff, mypy
+- [x] T003 [P] Inicializar `frontend/` con Vite + React 18 + TypeScript, React Router, TanStack Query, Recharts; Vitest + Testing Library; ESLint + Prettier
+- [x] T004 [P] Configurar Ruff y mypy (modo estricto en `app/dominio`) en `backend/pyproject.toml`
+- [x] T005 [P] Crear `docker-compose.yml` con servicios `db` (PostgreSQL 16 con `pg_trgm`), `api`, `trabajador` y `web`
+- [x] T006 [P] Crear `backend/Dockerfile` con las librerías de sistema de WeasyPrint (Pango, HarfBuzz) y `frontend/Dockerfile`
+- [x] T007 [P] Crear `.env.example` (DATABASE_URL, JWT_SECRETO, ANTHROPIC_API_KEY, URL_FRONTEND) y `.gitignore`
+- [x] T008 [P] Crear el flujo de integración continua `.github/workflows/ci.yml`: Ruff, mypy, pytest (con servicio PostgreSQL), Vitest y ESLint
 
 ---
 
