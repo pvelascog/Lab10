@@ -158,3 +158,25 @@ export interface IniciativaDetalle extends IniciativaResumen {
     similitud: number;
   } | null;
 }
+
+export interface CalculosFinancieros {
+  roi: number | null;
+  nivel_roi: number | null;
+  meses_recuperacion: number | null;
+  nivel_recuperacion: number | null;
+  faltantes: string[];
+}
+
+/** Etiquetas de los campos de la ficha (también para los mensajes de faltantes). */
+export const CAMPOS_FICHA: Record<string, string> = {
+  pm_id: "Product Manager",
+  problema: "Problema",
+  solucion_objetivo: "Solución propuesta y objetivo",
+  segmento: "Segmento de cliente",
+  propuesta_valor: "Propuesta de valor diferencial",
+  supuestos_clave: "Supuestos clave",
+  datos_disponibles: "Datos disponibles",
+  inversion_estimada: "Inversión estimada",
+  ingresos_esperados: "Ingresos esperados",
+  flujo_mensual_neto: "Flujo mensual neto",
+};

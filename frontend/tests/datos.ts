@@ -17,13 +17,20 @@ export const TECNICO: Usuario = {
   roles: ["LIDER_TECNICO"],
 };
 
-const dimension = (codigo: string, nombre: string, rol: Usuario["roles"][number]) => ({
+const dimension = (
+  codigo: string,
+  nombre: string,
+  rol: Usuario["roles"][number],
+  criterios: VersionMarco["dimensiones"][number]["criterios"] = [],
+) => ({ codigo, nombre, proposito: "", peso: 1 / 6, rol_sugerido: rol, criterios });
+
+const criterio = (codigo: string, nombre: string, niveles: string[]) => ({
   codigo,
   nombre,
-  proposito: "",
-  peso: 1 / 6,
-  rol_sugerido: rol,
-  criterios: [],
+  definicion: "",
+  escala_original: 5,
+  calculable: "NO" as const,
+  niveles: niveles.map((descripcion, n) => ({ nivel: n + 1, descripcion })),
 });
 
 export const MARCO: VersionMarco = {
@@ -41,6 +48,10 @@ export const MARCO: VersionMarco = {
   },
   dimensiones: [
     dimension("MER", "Mercado", "LIDER_COMERCIAL"),
+    dimension("FIN", "Financiera", "PM", [
+      criterio("FIN-02", "Tiempo de recuperación", ["> 36", "24–36", "12–24", "6–12", "< 6"]),
+      criterio("FIN-03", "Potencial de ROI", ["< 25", "25–50", "50–75", "75–100", "> 100 %"]),
+    ]),
     dimension("TEC", "Técnica", "LIDER_TECNICO"),
   ],
 };

@@ -47,11 +47,11 @@ respuestas que las pruebas de contrato verifican.
 | `GET /iniciativas?estado=&origen=&resultado=&desde=&hasta=&orden=` | Backlog visible para el usuario (FR-004, FR-027a). `orden` ∈ `-creado_en` (por defecto), `creado_en`, `nombre`, `-nombre`. El filtro `resultado` se habilita con la consolidación (HU4) | autenticado |
 | `POST /iniciativas` | `{nombre, descripcion, origen, asignaciones?: [{dimension, usuario_id}]}` → 201 con el detalle. `posible_duplicado_de = {id, codigo, nombre, similitud}` si la similitud trigram con otra iniciativa es ≥ 0.6; `id` y `nombre` son `null` cuando el usuario no puede ver esa iniciativa | autenticado |
 | `GET /iniciativas/{id}` | Ficha, estado, asignaciones, evaluaciones | visible |
-| `PATCH /iniciativas/{id}` | Edita la ficha (solo en `IDENTIFICADA` o `ESTRUCTURADA`) | autor o PM |
-| `PUT /iniciativas/{id}/asignaciones` | Reemplaza evaluadores por dimensión | PM |
+| `PATCH /iniciativas/{id}` | Edita la ficha; solo aplica los campos enviados (`null` borra). Solo en `IDENTIFICADA` o `ESTRUCTURADA` (409 en otro estado). `pm_id` solo lo asigna un PM y debe ser un usuario con rol PM. Inversión > 0 e ingresos ≥ 0 (400) | autor, PM de la iniciativa o rol PM |
+| `PUT /iniciativas/{id}/asignaciones` | `{asignaciones: [{dimension, usuario_id}]}` reemplaza los evaluadores por dimensión (solo en `IDENTIFICADA` o `ESTRUCTURADA`) | PM de la iniciativa o rol PM |
 | `GET /iniciativas/{id}/sugerencias-evaluadores` | Sugerencias por dimensión con su razón (HU10) | PM |
-| `POST /iniciativas/{id}/transiciones` | `{hacia: "ESTRUCTURADA" \| "EN_EVALUACION" \| …}` → 200 o 409/422 con lo que falta | según la tabla de estados |
-| `GET /iniciativas/{id}/calculos-financieros` | ROI, tiempo de recuperación y niveles propuestos | visible |
+| `POST /iniciativas/{id}/transiciones` | `{hacia: "ESTRUCTURADA" \| "EN_EVALUACION" \| …}` → 200 con el detalle; 409 si la transición no existe desde el estado actual; 422 con `campos` = lo que falta | según la tabla de estados |
+| `GET /iniciativas/{id}/calculos-financieros` | `{roi, nivel_roi, meses_recuperacion, nivel_recuperacion, faltantes}` calculados con los datos guardados de la ficha; `meses_recuperacion = null` con nivel 1 si el flujo mensual no es positivo | visible |
 
 ## Evaluación
 

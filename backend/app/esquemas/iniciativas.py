@@ -132,3 +132,55 @@ class IniciativaDetalle(IniciativaResumen):
             ],
             posible_duplicado_de=duplicado,
         )
+
+
+Monto = Annotated[Decimal, Field(max_digits=16, decimal_places=2)]
+
+
+class IniciativaEditar(BaseModel):
+    """Campos editables de la ficha (HU2). Solo se aplican los enviados; null borra el valor."""
+
+    nombre: Annotated[str, Field(min_length=1, max_length=200)] | None = None
+    descripcion: Annotated[str, Field(min_length=1, max_length=5000)] | None = None
+    origen: OrigenIniciativa | None = None
+    pm_id: uuid.UUID | None = None
+    problema: Annotated[str, Field(max_length=5000)] | None = None
+    solucion_objetivo: Annotated[str, Field(max_length=5000)] | None = None
+    segmento: Annotated[str, Field(max_length=2000)] | None = None
+    propuesta_valor: Annotated[str, Field(max_length=5000)] | None = None
+    supuestos_clave: list[Annotated[str, Field(max_length=1000)]] | None = Field(
+        default=None, max_length=30
+    )
+    datos_disponibles: Annotated[str, Field(max_length=5000)] | None = None
+    inversion_estimada: Annotated[Monto, Field(gt=0)] | None = None
+    ingresos_esperados: Annotated[Monto, Field(ge=0)] | None = None
+    flujo_mensual_neto: Monto | None = None
+
+    @field_validator("nombre", "descripcion")
+    @classmethod
+    def _textos_obligatorios(cls, valor: str | None) -> str | None:
+        return None if valor is None else _no_vacio(valor)
+
+    def cambios(self) -> dict[str, object]:
+        cambios = self.model_dump(include=self.model_fields_set)
+        # Nombre, descripción y origen no se pueden borrar.
+        for campo in ("nombre", "descripcion", "origen"):
+            if cambios.get(campo, "") is None:
+                del cambios[campo]
+        return cambios
+
+
+class TransicionEntrada(BaseModel):
+    hacia: EstadoIniciativa
+
+
+class AsignacionesEntrada(BaseModel):
+    asignaciones: list[AsignacionEntrada]
+
+
+class CalculosFinancierosSalida(BaseModel):
+    roi: float | None
+    nivel_roi: int | None
+    meses_recuperacion: float | None
+    nivel_recuperacion: int | None
+    faltantes: list[str]

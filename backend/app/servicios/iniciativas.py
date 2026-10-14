@@ -33,7 +33,7 @@ class AsignacionPedida:
     usuario_id: uuid.UUID
 
 
-async def _validar_asignaciones(
+async def validar_asignaciones(
     sesion: AsyncSession, pedidas: list[AsignacionPedida]
 ) -> list[AsignacionPedida]:
     """Verifica dimensiones del marco vigente y usuarios activos; elimina repetidas."""
@@ -95,7 +95,7 @@ async def registrar(
     asignaciones: list[AsignacionPedida],
 ) -> Iniciativa:
     nombre, descripcion = nombre.strip(), descripcion.strip()
-    validas = await _validar_asignaciones(sesion, asignaciones)
+    validas = await validar_asignaciones(sesion, asignaciones)
     duplicado = await _buscar_duplicado(sesion, nombre, descripcion)
 
     numero = int(

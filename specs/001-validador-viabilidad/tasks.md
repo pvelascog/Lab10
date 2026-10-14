@@ -98,15 +98,15 @@
 
 ### Pruebas HU2
 
-- [ ] T039 [P] [HU2] Pruebas unitarias de cálculos financieros: ROI, tiempo de recuperación, conversión a nivel 1–5 con límites al nivel mejor (12 meses → 4; 50 % → 3), inversión ≤ 0 rechazada en `backend/tests/unit/test_calculos_financieros.py`
-- [ ] T040 [P] [HU2] Prueba de integración: transición a `ESTRUCTURADA` con ficha incompleta (lista de faltantes), completa, y edición solo en estados permitidos en `backend/tests/integration/test_ficha.py`
+- [x] T039 [P] [HU2] Pruebas unitarias de cálculos financieros: ROI, tiempo de recuperación, conversión a nivel 1–5 con límites al nivel mejor (12 meses → 4; 50 % → 3), inversión ≤ 0 rechazada en `backend/tests/unit/test_calculos_financieros.py`
+- [x] T040 [P] [HU2] Prueba de integración: transición a `ESTRUCTURADA` con ficha incompleta (lista de faltantes), completa, y edición solo en estados permitidos en `backend/tests/integration/test_ficha.py`
 
 ### Implementación HU2
 
-- [ ] T041 [P] [HU2] Funciones puras de cálculos financieros en `backend/app/dominio/calculos_financieros.py`
-- [ ] T042 [HU2] Servicio de ciclo de vida con la tabla de transiciones de `data-model.md` (409 si no está permitida) en `backend/app/servicios/ciclo_vida.py`
-- [ ] T043 [HU2] Rutas `PATCH /iniciativas/{id}`, `PUT /iniciativas/{id}/asignaciones`, `POST /iniciativas/{id}/transiciones`, `GET /iniciativas/{id}/calculos-financieros` en `backend/app/api/iniciativas.py`
-- [ ] T044 [P] [HU2] Página Ficha con supuestos clave, datos financieros y vista previa de ROI en `frontend/src/paginas/Ficha.tsx`
+- [x] T041 [P] [HU2] Funciones puras de cálculos financieros en `backend/app/dominio/calculos_financieros.py`
+- [x] T042 [HU2] Servicio de ciclo de vida con la tabla de transiciones de `data-model.md` (409 si no está permitida) en `backend/app/servicios/ciclo_vida.py`
+- [x] T043 [HU2] Rutas `PATCH /iniciativas/{id}`, `PUT /iniciativas/{id}/asignaciones`, `POST /iniciativas/{id}/transiciones`, `GET /iniciativas/{id}/calculos-financieros` en `backend/app/api/iniciativas.py`
+- [x] T044 [P] [HU2] Página Ficha con supuestos clave, datos financieros y vista previa de ROI en `frontend/src/paginas/Ficha.tsx`
 
 **Punto de control**: HU1 y HU2 funcionan juntas.
 

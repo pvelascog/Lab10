@@ -19,3 +19,22 @@ class DatosInvalidos(ErrorAplicacion):
 class NoEncontrado(ErrorAplicacion):
     def __init__(self, detalle: str = "Recurso no encontrado") -> None:
         super().__init__(404, detalle)
+
+
+class SinPermiso(ErrorAplicacion):
+    def __init__(self, detalle: str = "No tiene permisos para esta acción") -> None:
+        super().__init__(403, detalle)
+
+
+class Conflicto(ErrorAplicacion):
+    """409: la operación no es posible en el estado actual."""
+
+    def __init__(self, detalle: str) -> None:
+        super().__init__(409, detalle)
+
+
+class ReglaIncumplida(ErrorAplicacion):
+    """422: falta cumplir una regla de negocio; `campos` indica qué falta."""
+
+    def __init__(self, detalle: str, campos: dict[str, str] | None = None) -> None:
+        super().__init__(422, detalle, campos)

@@ -3,14 +3,17 @@ import { Link, useLocation, useParams } from "react-router-dom";
 
 import { api, ErrorApi } from "../api/cliente";
 import { useMarcoVigente } from "../api/consultas";
-import { NOMBRES_ORIGENES, type IniciativaDetalle } from "../api/tipos";
+import { CAMPOS_FICHA, NOMBRES_ORIGENES, type IniciativaDetalle } from "../api/tipos";
 import { EstadoBadge } from "../componentes/EstadoBadge";
+import { useSesion } from "../estado/sesion";
 import { formatearFecha } from "../utilidades/fechas";
+import { puedeEditarFicha } from "../utilidades/permisos";
 
 export function DetalleIniciativa() {
   const { id = "" } = useParams();
   const recienCreada = (useLocation().state as { recienCreada?: boolean } | null)?.recienCreada;
   const marco = useMarcoVigente();
+  const { usuario } = useSesion();
   const {
     data: i,
     error,
@@ -72,6 +75,50 @@ export function DetalleIniciativa() {
           <dt>Product Manager</dt>
           <dd>{i.pm?.nombre ?? "Sin asignar"}</dd>
         </dl>
+      </section>
+
+      <section className="tarjeta">
+        <header className="encabezado-pagina">
+          <h2>Ficha de la iniciativa</h2>
+          <Link
+            className={puedeEditarFicha(usuario, i) ? "boton" : "boton secundario"}
+            to={`/iniciativas/${i.id}/ficha`}
+          >
+            {!puedeEditarFicha(usuario, i)
+              ? "Ver ficha"
+              : i.problema
+                ? "Editar ficha"
+                : "Completar ficha"}
+          </Link>
+        </header>
+        {i.problema ? (
+          <dl className="datos">
+            {(["problema", "solucion_objetivo", "segmento", "propuesta_valor"] as const).map(
+              (c) => (
+                <div key={c} className="contents">
+                  <dt>{CAMPOS_FICHA[c]}</dt>
+                  <dd>{i[c] ?? <span className="texto-secundario">Pendiente</span>}</dd>
+                </div>
+              ),
+            )}
+            <dt>{CAMPOS_FICHA.supuestos_clave}</dt>
+            <dd>
+              {i.supuestos_clave.length ? (
+                <ul className="sin-margen">
+                  {i.supuestos_clave.map((s) => (
+                    <li key={s}>{s}</li>
+                  ))}
+                </ul>
+              ) : (
+                <span className="texto-secundario">Pendiente</span>
+              )}
+            </dd>
+          </dl>
+        ) : (
+          <p className="texto-secundario">
+            La ficha aún no se completa. El Product Manager la estructura antes de la evaluación.
+          </p>
+        )}
       </section>
 
       <section className="tarjeta">

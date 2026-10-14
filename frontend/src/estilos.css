@@ -480,3 +480,49 @@ a.boton {
   color: var(--texto-secundario);
   line-height: 1.2;
 }
+
+.sin-borde {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.contents {
+  display: contents;
+}
+
+a.boton.secundario {
+  background: transparent;
+  color: var(--primario);
+  border: 1px solid var(--primario);
+}
+
+label small {
+  font-weight: 400;
+}
+
+.lista-supuestos {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.fila-supuesto {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.fila-supuesto input {
+  flex: 1;
+}
+
+.avisos {
+  scroll-margin-top: 1rem;
+}
+
+.aviso ul {
+  margin: 0.5rem 0 0;
+}
