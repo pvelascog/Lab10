@@ -16,6 +16,7 @@ respuestas que las pruebas de contrato verifican.
 | 404 | Recurso inexistente **o no visible** para el usuario (no se revela su existencia) |
 | 409 | Transición de estado no permitida o versión del marco inmutable |
 | 422 | Regla de negocio incumplida (p. ej. pesos que no suman 100 %, divergencias sin comentar) |
+| 429 | Cuenta bloqueada temporalmente tras 5 intentos fallidos de inicio de sesión (15 minutos) |
 
 ---
 
@@ -23,8 +24,8 @@ respuestas que las pruebas de contrato verifican.
 
 | Método y ruta | Descripción | Permiso |
 |---------------|-------------|---------|
-| `POST /auth/login` | `{correo, contrasena}` → fija cookie; devuelve usuario y roles | público |
-| `POST /auth/logout` | Cierra la sesión | autenticado |
+| `POST /auth/login` | `{correo, contrasena}` → fija las cookies `sesion` (HttpOnly) y `csrf`; devuelve `{usuario, csrf}`. 401 con mensaje genérico si las credenciales no son válidas; 429 si la cuenta está bloqueada | público |
+| `POST /auth/logout` | Borra las cookies de sesión → 204 | público |
 | `GET /auth/yo` | Usuario actual y roles | autenticado |
 | `GET /usuarios?rol=` | Lista de usuarios (para asignar evaluadores) | PM, ADMIN_MARCO |
 | `POST /usuarios` · `PATCH /usuarios/{id}` | Crear usuario, cambiar roles o desactivar | ADMIN_MARCO |

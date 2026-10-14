@@ -27,6 +27,8 @@ services:
         required: false
     environment:
       DATABASE_URL: postgresql+asyncpg://validador:validador@db:5432/validador
+      # Valor solo para desarrollo local; en otro entorno defínalo en .env
+      JWT_SECRETO: ${JWT_SECRETO:-desarrollo-local-no-usar-en-produccion-0123456789}
     ports:
       - "8000:8000"
     depends_on:
@@ -42,6 +44,8 @@ services:
         required: false
     environment:
       DATABASE_URL: postgresql+asyncpg://validador:validador@db:5432/validador
+      # Valor solo para desarrollo local; en otro entorno defínalo en .env
+      JWT_SECRETO: ${JWT_SECRETO:-desarrollo-local-no-usar-en-produccion-0123456789}
     depends_on:
       db:
         condition: service_healthy

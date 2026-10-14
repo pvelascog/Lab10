@@ -1,18 +1,26 @@
 import { Route, Routes } from "react-router-dom";
 
-function Inicio() {
-  return (
-    <main>
-      <h1>Validador de Viabilidad de Productos</h1>
-      <p>Marco de Viabilidad NEPXA v3.0</p>
-    </main>
-  );
-}
+import { Diseno } from "./componentes/Diseno";
+import { RutaProtegida } from "./estado/sesion";
+import { Inicio } from "./paginas/Inicio";
+import { Login } from "./paginas/Login";
+import { Marco } from "./paginas/Marco";
 
 export function App() {
   return (
     <Routes>
-      <Route path="*" element={<Inicio />} />
+      <Route path="/login" element={<Login />} />
+      <Route
+        element={
+          <RutaProtegida>
+            <Diseno />
+          </RutaProtegida>
+        }
+      >
+        <Route index element={<Inicio />} />
+        <Route path="marco" element={<Marco />} />
+        <Route path="*" element={<p className="tarjeta">Página no encontrada.</p>} />
+      </Route>
     </Routes>
   );
 }

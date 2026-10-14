@@ -69,8 +69,8 @@ Una versión `VIGENTE` o `RETIRADA` es **inmutable**; para cambiarla se crea otr
 | version_marco_id | ref | |
 | codigo | texto | `MER`, `COM`, `FIN`, `TEC`, `CMP`, `ECO` |
 | nombre, proposito | texto | |
-| peso | decimal(5,4) | la suma por versión debe ser 1.0000 (FR-012, HU9) |
-| rol_sugerido | ref rol | asignación por defecto de evaluadores (FR-010) |
+| peso | decimal(9,8) | la suma por versión debe ser exactamente 1 (FR-012, HU9); con pesos iguales la última dimensión absorbe el residuo de redondeo |
+| rol_sugerido | código de rol | asignación por defecto de evaluadores (FR-010) |
 | orden | entero | |
 
 **criterio**

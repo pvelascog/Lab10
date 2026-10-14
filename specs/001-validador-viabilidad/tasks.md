@@ -38,30 +38,30 @@
 
 ### Pruebas de la base
 
-- [ ] T009 [P] Prueba de integración del inicio de sesión (credenciales válidas, inválidas, bloqueo tras 5 intentos, cierre de sesión, CSRF) en `backend/tests/integration/test_auth.py`
-- [ ] T010 [P] Prueba de integración de permisos por rol (401 sin sesión, 403 sin rol) en `backend/tests/integration/test_permisos.py`
-- [ ] T011 [P] Prueba de la semilla del marco: 6 dimensiones, 28 criterios, pesos que suman 1, Recurrencia con niveles {1, 3, 5} en `backend/tests/integration/test_semilla_marco.py`
+- [x] T009 [P] Prueba de integración del inicio de sesión (credenciales válidas, inválidas, bloqueo tras 5 intentos, cierre de sesión, CSRF) en `backend/tests/integration/test_auth.py`
+- [x] T010 [P] Prueba de integración de permisos por rol (401 sin sesión, 403 sin rol) en `backend/tests/integration/test_permisos.py`
+- [x] T011 [P] Prueba de la semilla del marco: 6 dimensiones, 28 criterios, pesos que suman 1, Recurrencia con niveles {1, 3, 5} en `backend/tests/integration/test_semilla_marco.py`
 
 ### Implementación de la base
 
-- [ ] T012 Configuración por variables de entorno en `backend/app/config.py`
-- [ ] T013 Sesión de base de datos async y clase base de modelos (UUID, `creado_en`, `actualizado_en`) en `backend/app/db.py`
-- [ ] T014 Configurar Alembic en `backend/alembic/` (con la extensión `pg_trgm`)
-- [ ] T015 [P] Modelos `usuario`, `rol`, `usuario_rol` en `backend/app/modelos/usuarios.py`
-- [ ] T016 [P] Modelos `version_marco`, `dimension`, `criterio`, `nivel_criterio` en `backend/app/modelos/marco.py`
-- [ ] T017 [P] Modelo `auditoria` (solo inserción) en `backend/app/modelos/auditoria.py`
-- [ ] T018 Migración inicial de las tablas de T015–T017 en `backend/alembic/versions/`
-- [ ] T019 Semilla del Marco NEPXA v3.0 (28 criterios con rúbricas de `marco-nepxa.md`, pesos 1/6, umbrales por defecto, roles sugeridos) en `backend/app/semillas/marco_v3.py`
-- [ ] T020 Seguridad: hash Argon2, emisión y validación de JWT en cookie, token CSRF, dependencias `usuario_actual` y `requiere_rol(...)` en `backend/app/seguridad.py`
-- [ ] T021 Servicio de auditoría `registrar(usuario, accion, entidad, antes, despues)` en `backend/app/servicios/auditoria.py`
-- [ ] T022 Rutas `/auth/login`, `/auth/logout`, `/auth/yo` en `backend/app/api/auth.py`
-- [ ] T023 Rutas `/usuarios` (listar, crear, cambiar roles, desactivar) en `backend/app/api/usuarios.py`
-- [ ] T024 Ruta `GET /marco/vigente` en `backend/app/api/marco.py`
-- [ ] T025 Manejador de errores con el formato de `contracts/api.md` y aplicación FastAPI en `backend/app/main.py`
-- [ ] T026 Comando para crear el primer administrador en `backend/app/semillas/admin.py`
-- [ ] T027 [P] Cliente HTTP tipado con cookie y cabecera CSRF en `frontend/src/api/cliente.ts`
-- [ ] T028 [P] Estado de sesión y rutas protegidas por rol en `frontend/src/estado/sesion.tsx`
-- [ ] T029 Página de inicio de sesión y diseño general (menú según rol) en `frontend/src/paginas/Login.tsx` y `frontend/src/componentes/Diseno.tsx`
+- [x] T012 Configuración por variables de entorno en `backend/app/config.py`
+- [x] T013 Sesión de base de datos async y clase base de modelos (UUID, `creado_en`, `actualizado_en`) en `backend/app/db.py`
+- [x] T014 Configurar Alembic en `backend/alembic/` (con la extensión `pg_trgm`)
+- [x] T015 [P] Modelos `usuario`, `rol`, `usuario_rol` en `backend/app/modelos/usuarios.py`
+- [x] T016 [P] Modelos `version_marco`, `dimension`, `criterio`, `nivel_criterio` en `backend/app/modelos/marco.py`
+- [x] T017 [P] Modelo `auditoria` (solo inserción) en `backend/app/modelos/auditoria.py`
+- [x] T018 Migración inicial de las tablas de T015–T017 en `backend/alembic/versions/`
+- [x] T019 Semilla del Marco NEPXA v3.0 (28 criterios con rúbricas de `marco-nepxa.md`, pesos 1/6, umbrales por defecto, roles sugeridos) en `backend/app/semillas/marco_v3.py`
+- [x] T020 Seguridad: hash Argon2, emisión y validación de JWT en cookie, token CSRF, dependencias `usuario_actual` y `requiere_rol(...)` en `backend/app/seguridad.py`
+- [x] T021 Servicio de auditoría `registrar(usuario, accion, entidad, antes, despues)` en `backend/app/servicios/auditoria.py`
+- [x] T022 Rutas `/auth/login`, `/auth/logout`, `/auth/yo` en `backend/app/api/auth.py`
+- [x] T023 Rutas `/usuarios` (listar, crear, cambiar roles, desactivar) en `backend/app/api/usuarios.py`
+- [x] T024 Ruta `GET /marco/vigente` en `backend/app/api/marco.py`
+- [x] T025 Manejador de errores con el formato de `contracts/api.md` y aplicación FastAPI en `backend/app/main.py`
+- [x] T026 Comando para crear el primer administrador en `backend/app/semillas/admin.py`
+- [x] T027 [P] Cliente HTTP tipado con cookie y cabecera CSRF en `frontend/src/api/cliente.ts`
+- [x] T028 [P] Estado de sesión y rutas protegidas por rol en `frontend/src/estado/sesion.tsx`
+- [x] T029 Página de inicio de sesión y diseño general (menú según rol) en `frontend/src/paginas/Login.tsx` y `frontend/src/componentes/Diseno.tsx`
 
 **Punto de control**: se puede iniciar sesión y consultar el marco vigente.
 
@@ -156,7 +156,7 @@
 - [ ] T061 [HU4] Servicio de consolidación (solo calificaciones válidas según origen) en `backend/app/servicios/consolidacion.py`
 - [ ] T062 [HU4] Rutas `GET` y `PATCH /evaluaciones/{id}/resultado` en `backend/app/api/evaluaciones.py`
 - [ ] T063 [P] [HU4] Componente RadarDimensiones (6 ejes, escala 1–5) en `frontend/src/componentes/RadarDimensiones.tsx`
-- [ ] T064 [P] [HU4] Utilidad de formato que **trunca** a 2 decimales y su prueba en `frontend/src/utilidades/formato.ts` y `frontend/tests/formato.test.ts`
+- [x] T064 [P] [HU4] Utilidad de formato que **trunca** a 2 decimales y su prueba en `frontend/src/utilidades/formato.ts` y `frontend/tests/formato.test.ts` *(adelantada en la Fase 2 para mostrar los pesos del marco)*
 - [ ] T065 [HU4] Página Resumen ejecutivo con resultado, regla aplicada, puntajes, pesos, fortalezas, debilidades, riesgos y supuestos en `frontend/src/paginas/Resumen.tsx`
 
 **Punto de control 🎯 MVP**: registrar → estructurar → evaluar con varios evaluadores → resultado con radar. Demostrable.
