@@ -11,18 +11,22 @@ La especificación describe el **qué** y el **por qué**; el plan describe el *
 los criterios de aceptación de la especificación.
 
 ### II. Calificaciones explicables
-Toda calificación (financiera, técnica, de mercado y comercial) debe mostrar:
-- el puntaje obtenido por cada criterio,
+Toda calificación en las seis dimensiones del Marco NEPXA (Mercado, Comercial, Financiera y de Inversión,
+Técnica, Competencia y Ecosistema) debe mostrar:
+- el puntaje obtenido por cada criterio (1 a 5),
 - el peso aplicado,
-- la justificación textual del resultado.
+- la justificación y la fuente de la evidencia.
 
-Un veredicto sin justificación se considera un defecto.
+El resultado recomendado debe indicar la regla de decisión que lo determinó: el balance entre dimensiones
+es tan importante como el promedio. Una calificación o un resultado sin justificación se considera un defecto.
 
 ### III. La IA asiste, la persona decide
-Los componentes de IA (benchmark y recomendaciones) son **apoyo** a la decisión, no la decisión final.
+Los componentes de IA (benchmark, calificaciones sugeridas y recomendaciones) son **apoyo** a la decisión.
+La decisión final (GO, ITERAR, VALIDAR o NO-GO) corresponde al **Comité de Producto**.
 - Los resultados de IA se identifican claramente como generados por IA.
 - El benchmark debe indicar la fuente de cada solución comparada; no se presentan competidores sin fuente.
-- Un evaluador humano puede revisar y ajustar el veredicto, dejando registro del cambio.
+- Toda calificación sugerida por IA debe ser confirmada por una persona antes de contar en el puntaje.
+- Si el comité decide distinto al resultado recomendado, debe quedar registrado el motivo.
 
 ### IV. Criterios configurables y trazables
 Los criterios, pesos y umbrales de viabilidad son configurables y versionados. Cada evaluación registra
@@ -54,4 +58,8 @@ capacidades de IA de forma incremental. Se evita la complejidad que no esté jus
 - Esta constitución prevalece sobre cualquier otra práctica del proyecto.
 - Las enmiendas se documentan con fecha, motivo y versión.
 
-**Versión**: 1.0.0 | **Ratificada**: 2026-10-14 | **Última enmienda**: 2026-10-14
+### Historial de enmiendas
+- **1.1.0 (2026-10-14)**: alineación con el Marco de Viabilidad NEPXA v3.0 (seis dimensiones, escala 1–5,
+  regla de balance, decisión del Comité de Producto).
+
+**Versión**: 1.1.0 | **Ratificada**: 2026-10-14 | **Última enmienda**: 2026-10-14
