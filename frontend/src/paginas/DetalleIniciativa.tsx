@@ -5,6 +5,7 @@ import { api, ErrorApi } from "../api/cliente";
 import { useMarcoVigente } from "../api/consultas";
 import { CAMPOS_FICHA, NOMBRES_ORIGENES, type IniciativaDetalle } from "../api/tipos";
 import { EstadoBadge } from "../componentes/EstadoBadge";
+import { ResultadoBadge } from "../componentes/ResultadoBadge";
 import { useSesion } from "../estado/sesion";
 import { formatearFecha } from "../utilidades/fechas";
 import { gestiona, puedeEditarFicha } from "../utilidades/permisos";
@@ -95,7 +96,14 @@ export function DetalleIniciativa() {
         <section className="tarjeta" aria-labelledby="titulo-evaluacion">
           <header className="encabezado-pagina">
             <h2 id="titulo-evaluacion">Evaluación multidimensional</h2>
-            {i.evaluacion_actual_id ? (
+            {i.evaluacion_actual_id && i.resultado ? (
+              <span className="acciones">
+                <ResultadoBadge resultado={i.resultado} />
+                <Link className="boton" to={`/evaluaciones/${i.evaluacion_actual_id}/resumen`}>
+                  Ver resumen ejecutivo
+                </Link>
+              </span>
+            ) : i.evaluacion_actual_id ? (
               <Link className="boton" to={`/evaluaciones/${i.evaluacion_actual_id}`}>
                 Ir a la evaluación
               </Link>

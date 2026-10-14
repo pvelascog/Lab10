@@ -16,7 +16,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dominio.calculos_financieros import proponer
-from app.dominio.motor_decision import divergencia
+from app.dominio.motor_decision import divergencia, puntaje_criterio
 from app.errores import Conflicto, DatosInvalidos, NoEncontrado, ReglaIncumplida, SinPermiso
 from app.modelos.evaluaciones import (
     ORIGENES_VALIDOS,
@@ -63,7 +63,8 @@ class Contexto:
 
     evaluacion: Evaluacion
     iniciativa: Iniciativa
-    usuario: Usuario
+    # None: vista completa del sistema, sin reglas de visibilidad (consolidación).
+    usuario: Usuario | None
 
     @property
     def dimensiones(self) -> list[Dimension]:
@@ -88,25 +89,39 @@ class Contexto:
     def evaluadores(self, dimension: str) -> list[Usuario]:
         return [a.usuario for a in self.iniciativa.asignaciones if a.dimension_codigo == dimension]
 
+    def _uid(self, usuario_id: uuid.UUID | None) -> uuid.UUID | None:
+        return usuario_id or (self.usuario.id if self.usuario else None)
+
     def evalua(self, dimension: str, usuario_id: uuid.UUID | None = None) -> bool:
-        uid = usuario_id or self.usuario.id
+        uid = self._uid(usuario_id)
         return any(u.id == uid for u in self.evaluadores(dimension))
 
     def envio(self, dimension: str, usuario_id: uuid.UUID | None = None) -> bool:
-        uid = usuario_id or self.usuario.id
+        uid = self._uid(usuario_id)
         return any(
             e.dimension_codigo == dimension and e.evaluador_id == uid
             for e in self.evaluacion.envios
         )
 
     def ve_calificaciones(self, dimension: str) -> bool:
-        if self.evaluacion.estado != EstadoEvaluacion.ABIERTA:
+        if self.usuario is None or self.evaluacion.estado != EstadoEvaluacion.ABIERTA:
             return True
         if self.evalua(dimension):
             return self.envio(dimension)
         return ve_portafolio(self.usuario)
 
+    def puntajes_criterio(self) -> dict[str, float]:
+        """Promedio de las calificaciones enviadas de cada criterio que tiene alguna."""
+        return {
+            c.codigo: puntaje_criterio([p.nivel for p in publicadas])
+            for d in self.dimensiones
+            for c in d.criterios
+            if (publicadas := self.publicadas(c))
+        }
+
     def mia(self, criterio: Criterio) -> Calificacion | None:
+        if self.usuario is None:
+            return None
         return next(
             (
                 c
@@ -169,6 +184,12 @@ async def contexto(sesion: AsyncSession, usuario: Usuario, evaluacion_id: uuid.U
     return Contexto(evaluacion, iniciativa, usuario)
 
 
+def _usuario(ctx: Contexto) -> Usuario:
+    if ctx.usuario is None:
+        raise ValueError("Operación que requiere un usuario")
+    return ctx.usuario
+
+
 def _exigir_abierta(ctx: Contexto) -> None:
     if ctx.evaluacion.estado != EstadoEvaluacion.ABIERTA:
         raise Conflicto("La evaluación ya no admite cambios")
@@ -211,7 +232,7 @@ async def calificar(
     if calificacion is None:
         calificacion = Calificacion(
             criterio=criterio,
-            evaluador_id=ctx.usuario.id,
+            evaluador_id=_usuario(ctx).id,
             nivel=nivel,
             justificacion=justificacion.strip(),
             fuente=fuente,
@@ -226,7 +247,7 @@ async def calificar(
     await sesion.flush()
     await auditoria.registrar(
         sesion,
-        usuario_id=ctx.usuario.id,
+        usuario_id=_usuario(ctx).id,
         accion="CALIFICAR",
         entidad="evaluacion",
         entidad_id=ctx.evaluacion.id,
@@ -250,12 +271,12 @@ async def enviar_dimension(sesion: AsyncSession, ctx: Contexto, codigo_dimension
             f"Califique todos los criterios de {dimension.nombre} antes de enviarla", faltan
         )
     ctx.evaluacion.envios.append(
-        EnvioDimension(dimension_codigo=dimension.codigo, evaluador_id=ctx.usuario.id)
+        EnvioDimension(dimension_codigo=dimension.codigo, evaluador_id=_usuario(ctx).id)
     )
     await sesion.flush()
     await auditoria.registrar(
         sesion,
-        usuario_id=ctx.usuario.id,
+        usuario_id=_usuario(ctx).id,
         accion="ENVIAR_DIMENSION",
         entidad="evaluacion",
         entidad_id=ctx.evaluacion.id,
@@ -269,19 +290,19 @@ async def comentar_divergencia(
     _exigir_abierta(ctx)
     criterio = ctx.criterio(codigo_criterio)
     dimension = ctx.dimension_de(criterio)
-    if not (ctx.evalua(dimension.codigo) or gestiona(ctx.usuario, ctx.iniciativa)):
+    if not (ctx.evalua(dimension.codigo) or gestiona(_usuario(ctx), ctx.iniciativa)):
         raise SinPermiso("Solo los evaluadores de la dimensión o el PM pueden comentar")
     if not ctx.ve_calificaciones(dimension.codigo) or not ctx.diverge(criterio):
         raise ReglaIncumplida(f"El criterio {criterio.codigo} no presenta una divergencia visible")
     comentario = ComentarioDivergencia(
-        criterio_id=criterio.id, autor_id=ctx.usuario.id, texto=texto.strip()
+        criterio_id=criterio.id, autor_id=_usuario(ctx).id, texto=texto.strip()
     )
     ctx.evaluacion.comentarios.append(comentario)
     await sesion.flush()
     await sesion.refresh(comentario, ["autor", "creado_en"])
     await auditoria.registrar(
         sesion,
-        usuario_id=ctx.usuario.id,
+        usuario_id=_usuario(ctx).id,
         accion="COMENTAR_DIVERGENCIA",
         entidad="evaluacion",
         entidad_id=ctx.evaluacion.id,

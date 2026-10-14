@@ -5,6 +5,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field, field_validator
 
+from app.dominio.motor_decision import Resultado
 from app.modelos.iniciativas import (
     EstadoIniciativa,
     Iniciativa,
@@ -68,9 +69,12 @@ class IniciativaResumen(BaseModel):
     autor: UsuarioBreve
     pm: UsuarioBreve | None
     creado_en: datetime
+    # Resultado recomendado de la evaluación actual, si ya se consolidó.
+    resultado: Resultado | None
 
     @classmethod
     def desde(cls, i: Iniciativa) -> "IniciativaResumen":
+        actual = i.evaluacion_actual
         return cls(
             id=i.id,
             codigo=i.codigo,
@@ -81,6 +85,7 @@ class IniciativaResumen(BaseModel):
             autor=UsuarioBreve(id=i.autor.id, nombre=i.autor.nombre),
             pm=UsuarioBreve.desde(i.pm),
             creado_en=i.creado_en,
+            resultado=actual.resultado.resultado if actual and actual.resultado else None,
         )
 
 

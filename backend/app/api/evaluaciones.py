@@ -7,14 +7,18 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import obtener_sesion
+from app.errores import NoEncontrado
 from app.esquemas.evaluaciones import (
     CalificacionEntrada,
     ComentarioEntrada,
     ComentarioSalida,
     DivergenciaSalida,
     EvaluacionSalida,
+    ResultadoSalida,
+    ResumenEditar,
 )
 from app.seguridad import UsuarioActual
+from app.servicios import consolidacion
 from app.servicios import evaluaciones as servicio
 from app.servicios.evaluaciones import Contexto
 from app.servicios.visibilidad import gestiona
@@ -24,7 +28,10 @@ Sesion = Annotated[AsyncSession, Depends(obtener_sesion)]
 
 
 def _salida(ctx: Contexto) -> EvaluacionSalida:
-    return EvaluacionSalida.construir(ctx, gestiona=gestiona(ctx.usuario, ctx.iniciativa))
+    usuario = ctx.usuario
+    return EvaluacionSalida.construir(
+        ctx, gestiona=usuario is not None and gestiona(usuario, ctx.iniciativa)
+    )
 
 
 async def _confirmar(sesion: AsyncSession, ctx: Contexto) -> EvaluacionSalida:
@@ -103,3 +110,33 @@ async def comentar(
     comentario = await servicio.comentar_divergencia(sesion, ctx, criterio, datos.texto)
     await sesion.commit()
     return ComentarioSalida.desde(comentario)
+
+
+def _resultado(ctx: Contexto) -> ResultadoSalida:
+    r = ctx.evaluacion.resultado
+    if r is None:
+        raise NoEncontrado("La evaluación aún no está consolidada")
+    usuario = ctx.usuario
+    return ResultadoSalida.construir(
+        ctx, r, puede_editar=usuario is not None and gestiona(usuario, ctx.iniciativa)
+    )
+
+
+@router.get("/{evaluacion_id}/resultado")
+async def resultado(
+    evaluacion_id: uuid.UUID, usuario: UsuarioActual, sesion: Sesion
+) -> ResultadoSalida:
+    return _resultado(await servicio.contexto(sesion, usuario, evaluacion_id))
+
+
+@router.patch("/{evaluacion_id}/resultado")
+async def editar_resultado(
+    evaluacion_id: uuid.UUID, datos: ResumenEditar, usuario: UsuarioActual, sesion: Sesion
+) -> ResultadoSalida:
+    ctx = await servicio.contexto(sesion, usuario, evaluacion_id)
+    await consolidacion.editar_resumen(
+        sesion, usuario, ctx.evaluacion, ctx.iniciativa, datos.model_dump(exclude_unset=True)
+    )
+    await sesion.commit()
+    await sesion.refresh(ctx.evaluacion)
+    return _resultado(ctx)

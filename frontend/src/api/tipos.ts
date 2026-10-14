@@ -132,6 +132,7 @@ export interface IniciativaResumen {
   autor: UsuarioBreve;
   pm: UsuarioBreve | null;
   creado_en: string;
+  resultado: Resultado | null;
 }
 
 export interface Asignacion {
@@ -234,4 +235,43 @@ export interface Evaluacion {
   puede_gestionar: boolean;
   dimensiones: DimensionEvaluacion[];
   pendientes: Record<string, string>;
+}
+
+// --- Resultado (HU4) -------------------------------------------------------------------------
+
+export const RESULTADOS = ["GO", "ITERAR", "VALIDAR", "NO_GO"] as const;
+export type Resultado = (typeof RESULTADOS)[number];
+
+export const NOMBRES_RESULTADOS: Record<Resultado, string> = {
+  GO: "GO · Lanzar",
+  ITERAR: "ITERAR · Desarrollar",
+  VALIDAR: "VALIDAR · Prototipar",
+  NO_GO: "NO-GO · Descartar",
+};
+
+export interface ResultadoEvaluacion {
+  evaluacion_id: string;
+  iniciativa: { id: string; codigo: string; nombre: string; estado: EstadoIniciativa };
+  version_marco: string;
+  score_total: number;
+  puntajes_dimension: Record<string, number>;
+  puntajes_criterio: Record<string, number>;
+  pesos: Record<string, number>;
+  umbrales: Record<
+    "critico" | "validar" | "debil" | "score_go" | "score_iterar" | "score_validar",
+    number
+  >;
+  nombres_dimension: Record<string, string>;
+  resultado: Resultado;
+  regla: string;
+  regla_aplicada: string;
+  dimensiones_implicadas: string[];
+  fortalezas: string[];
+  debilidades: string[];
+  riesgos: string[];
+  supuestos_criticos: string[];
+  borrador_ia: boolean;
+  consolidado_en: string;
+  consolidado_por: UsuarioBreve | null;
+  puede_editar: boolean;
 }

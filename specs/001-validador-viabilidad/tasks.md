@@ -145,19 +145,19 @@
 
 ### Pruebas HU4
 
-- [ ] T056 [P] [HU4] Pruebas de tabla del motor con los ejemplos de HU4 (GO 4.17; ITERAR 4.3 con 2.8; VALIDAR 3.4 con 2.3 y 2.4; NO-GO con 1.8) y valores límite exactos 2.0, 2.5, 3.0 y 4.0 en `backend/tests/unit/test_motor_decision.py`
-- [ ] T057 [P] [HU4] Pruebas de propiedades con Hypothesis: nunca GO con una dimensión < 3; siempre NO-GO con una dimensión < 2; bajar un puntaje nunca mejora el resultado; pesos iguales equivalen al promedio simple en `backend/tests/unit/test_motor_propiedades.py`
-- [ ] T058 [P] [HU4] Prueba de integración: consolidar con criterios faltantes (422), consolidación correcta, fotografía inmutable del resultado, regla aplicada informada en `backend/tests/integration/test_consolidacion.py`
+- [x] T056 [P] [HU4] Pruebas de tabla del motor con los ejemplos de HU4 (GO 4.17; ITERAR 4.3 con 2.8; VALIDAR 3.4 con 2.3 y 2.4; NO-GO con 1.8) y valores límite exactos 2.0, 2.5, 3.0 y 4.0 en `backend/tests/unit/test_motor_decision.py`
+- [x] T057 [P] [HU4] Pruebas de propiedades con Hypothesis: nunca GO con una dimensión < 3; siempre NO-GO con una dimensión < 2; bajar un puntaje nunca mejora el resultado; pesos iguales equivalen al promedio simple en `backend/tests/unit/test_motor_propiedades.py`
+- [x] T058 [P] [HU4] Prueba de integración: consolidar con criterios faltantes (422), consolidación correcta, fotografía inmutable del resultado, regla aplicada informada en `backend/tests/integration/test_consolidacion.py`
 
 ### Implementación HU4
 
-- [ ] T059 [HU4] Funciones puras `puntaje_dimension`, `score_total` y `resultado` (devuelve regla aplicada y dimensiones implicadas; umbrales desde la versión del marco) en `backend/app/dominio/motor_decision.py`
-- [ ] T060 [P] [HU4] Modelo `resultado_consolidado` en `backend/app/modelos/evaluaciones.py` y migración
-- [ ] T061 [HU4] Servicio de consolidación (solo calificaciones válidas según origen) en `backend/app/servicios/consolidacion.py`
-- [ ] T062 [HU4] Rutas `GET` y `PATCH /evaluaciones/{id}/resultado` en `backend/app/api/evaluaciones.py`
-- [ ] T063 [P] [HU4] Componente RadarDimensiones (6 ejes, escala 1–5) en `frontend/src/componentes/RadarDimensiones.tsx`
+- [x] T059 [HU4] Funciones puras `puntaje_dimension`, `score_total` y `resultado` (devuelve regla aplicada y dimensiones implicadas; umbrales desde la versión del marco) en `backend/app/dominio/motor_decision.py`
+- [x] T060 [P] [HU4] Modelo `resultado_consolidado` en `backend/app/modelos/evaluaciones.py` y migración
+- [x] T061 [HU4] Servicio de consolidación (solo calificaciones válidas según origen) en `backend/app/servicios/consolidacion.py`
+- [x] T062 [HU4] Rutas `GET` y `PATCH /evaluaciones/{id}/resultado` en `backend/app/api/evaluaciones.py`
+- [x] T063 [P] [HU4] Componente RadarDimensiones (6 ejes, escala 1–5) en `frontend/src/componentes/RadarDimensiones.tsx`
 - [x] T064 [P] [HU4] Utilidad de formato que **trunca** a 2 decimales y su prueba en `frontend/src/utilidades/formato.ts` y `frontend/tests/formato.test.ts` *(adelantada en la Fase 2 para mostrar los pesos del marco)*
-- [ ] T065 [HU4] Página Resumen ejecutivo con resultado, regla aplicada, puntajes, pesos, fortalezas, debilidades, riesgos y supuestos en `frontend/src/paginas/Resumen.tsx`
+- [x] T065 [HU4] Página Resumen ejecutivo con resultado, regla aplicada, puntajes, pesos, fortalezas, debilidades, riesgos y supuestos en `frontend/src/paginas/Resumen.tsx`
 
 **Punto de control 🎯 MVP**: registrar → estructurar → evaluar con varios evaluadores → resultado con radar. Demostrable.
 

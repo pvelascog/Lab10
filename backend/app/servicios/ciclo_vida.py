@@ -13,7 +13,7 @@ from app.errores import Conflicto, ReglaIncumplida, SinPermiso
 from app.modelos.iniciativas import EstadoIniciativa as E
 from app.modelos.iniciativas import Iniciativa
 from app.modelos.usuarios import Usuario
-from app.servicios import auditoria, evaluaciones
+from app.servicios import auditoria, consolidacion, evaluaciones
 from app.servicios.visibilidad import gestiona
 
 __all__ = ["cambiar_estado", "exigir_editable", "faltantes_ficha", "gestiona"]
@@ -64,6 +64,14 @@ async def _iniciar_evaluacion(sesion: AsyncSession, _: Usuario, i: Iniciativa) -
     await evaluaciones.crear(sesion, i)
 
 
+async def _sin_pendientes(_: AsyncSession, i: Iniciativa) -> dict[str, str]:
+    return consolidacion.pendientes(i)
+
+
+async def _consolidar(sesion: AsyncSession, usuario: Usuario, i: Iniciativa) -> None:
+    await consolidacion.consolidar(sesion, usuario, i)
+
+
 @dataclass(frozen=True)
 class Transicion:
     condiciones: Callable[[AsyncSession, Iniciativa], Awaitable[dict[str, str]]]
@@ -73,6 +81,7 @@ class Transicion:
 TRANSICIONES: dict[tuple[E, E], Transicion] = {
     (E.IDENTIFICADA, E.ESTRUCTURADA): Transicion(_ficha_completa),
     (E.ESTRUCTURADA, E.EN_EVALUACION): Transicion(_lista_para_evaluar, _iniciar_evaluacion),
+    (E.EN_EVALUACION, E.CONSOLIDADA): Transicion(_sin_pendientes, _consolidar),
 }
 
 

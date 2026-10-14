@@ -139,11 +139,18 @@ divergencia antes de consolidar (FR-010a).
 | Campo | Tipo |
 |-------|------|
 | puntajes_dimension | JSON `{MER: 4.2, …}` |
-| score_total | decimal |
+| puntajes_criterio | JSON `{MER-01: 4.5, …}` (promedio de las calificaciones enviadas) |
+| score_total | número |
 | resultado | enum `GO`, `ITERAR`, `VALIDAR`, `NO_GO` |
+| regla | `R1`…`R4` |
 | regla_aplicada | texto (p. ej. `R1: dimensión FIN = 1.75 < 2.0`) |
 | dimensiones_implicadas | lista de códigos |
-| fortalezas, debilidades, riesgos, supuestos_criticos | listas de texto (editables; borrador de IA marcado) |
+| fortalezas, debilidades, riesgos, supuestos_criticos | listas de texto (borrador automático, editables por el PM) |
+| borrador_ia | booleano (el borrador de IA llega en HU6) |
+| consolidado_por | ref usuario |
+
+Borrador automático: fortalezas = dimensiones ≥ 4.0; debilidades = dimensiones < 3.0; riesgos = criterios con
+puntaje ≤ 2.0; supuestos críticos = supuestos clave de la ficha.
 
 ### IA
 

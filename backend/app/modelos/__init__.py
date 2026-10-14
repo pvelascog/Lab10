@@ -6,6 +6,7 @@ from app.modelos.evaluaciones import (
     ComentarioDivergencia,
     EnvioDimension,
     Evaluacion,
+    ResultadoConsolidado,
 )
 from app.modelos.iniciativas import AsignacionEvaluador, Iniciativa
 from app.modelos.marco import Criterio, Dimension, NivelCriterio, VersionMarco
@@ -22,6 +23,7 @@ __all__ = [
     "Criterio",
     "Dimension",
     "NivelCriterio",
+    "ResultadoConsolidado",
     "Rol",
     "Usuario",
     "VersionMarco",

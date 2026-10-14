@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import obtener_sesion
 from app.dominio.calculos_financieros import proponer
+from app.dominio.motor_decision import Resultado
 from app.esquemas.iniciativas import (
     AsignacionesEntrada,
     CalculosFinancierosSalida,
@@ -44,10 +45,18 @@ async def listar(
     origen: OrigenIniciativa | None = None,
     desde: date | None = None,
     hasta: date | None = None,
+    resultado: Resultado | None = None,
     orden: servicio.Orden = "-creado_en",
 ) -> list[IniciativaResumen]:
     iniciativas = await servicio.listar(
-        sesion, usuario, estado=estado, origen=origen, desde=desde, hasta=hasta, orden=orden
+        sesion,
+        usuario,
+        estado=estado,
+        origen=origen,
+        desde=desde,
+        hasta=hasta,
+        resultado=resultado,
+        orden=orden,
     )
     return [IniciativaResumen.desde(i) for i in iniciativas]
 
@@ -67,8 +76,7 @@ async def registrar(
         ],
     )
     await sesion.commit()
-    await sesion.refresh(iniciativa)
-    return _detalle(usuario, iniciativa)
+    return _detalle(usuario, await servicio.recargar(sesion, iniciativa))
 
 
 @router.get("/{iniciativa_id}")
@@ -80,8 +88,7 @@ async def detalle(
 
 async def _guardar(sesion: AsyncSession, usuario: Usuario, i: Iniciativa) -> IniciativaDetalle:
     await sesion.commit()
-    await sesion.refresh(i)
-    return _detalle(usuario, i)
+    return _detalle(usuario, await servicio.recargar(sesion, i))
 
 
 @router.patch("/{iniciativa_id}")

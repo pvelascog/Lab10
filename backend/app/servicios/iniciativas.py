@@ -6,10 +6,13 @@ from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
 from typing import Literal
 
-from sqlalchemy import func, select, text
+from sqlalchemy import exists, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased, selectinload
 
+from app.dominio.motor_decision import Resultado
 from app.errores import DatosInvalidos, NoEncontrado
+from app.modelos.evaluaciones import Evaluacion, ResultadoConsolidado
 from app.modelos.iniciativas import (
     AsignacionEvaluador,
     EstadoIniciativa,
@@ -153,9 +156,24 @@ async def listar(
     origen: OrigenIniciativa | None = None,
     desde: date | None = None,
     hasta: date | None = None,
+    resultado: Resultado | None = None,
     orden: Orden = "-creado_en",
 ) -> list[Iniciativa]:
     consulta = select(Iniciativa).where(condicion_visible(usuario))
+    if resultado is not None:
+        # Resultado de la evaluación más reciente de cada iniciativa.
+        otra = aliased(Evaluacion)
+        ultima = (
+            select(func.max(otra.numero)).where(otra.iniciativa_id == Iniciativa.id)
+        ).scalar_subquery()
+        consulta = consulta.where(
+            exists().where(
+                Evaluacion.iniciativa_id == Iniciativa.id,
+                Evaluacion.numero == ultima,
+                ResultadoConsolidado.evaluacion_id == Evaluacion.id,
+                ResultadoConsolidado.resultado == resultado,
+            )
+        )
     if estado is not None:
         consulta = consulta.where(Iniciativa.estado == estado)
     if origen is not None:
@@ -169,3 +187,23 @@ async def listar(
     columna = Iniciativa.nombre if orden.lstrip("-") == "nombre" else Iniciativa.numero
     consulta = consulta.order_by(columna.desc() if orden.startswith("-") else columna.asc())
     return list((await sesion.execute(consulta)).scalars())
+
+
+async def recargar(sesion: AsyncSession, iniciativa: Iniciativa) -> Iniciativa:
+    """Vuelve a leer la iniciativa con todas sus relaciones tras confirmar cambios.
+
+    `refresh` no recarga las relaciones anidadas de objetos ya presentes en la sesión (p. ej. el
+    resultado de una evaluación), y en modo asíncrono no se permiten cargas perezosas.
+    """
+    recargada = await sesion.scalar(
+        select(Iniciativa)
+        .where(Iniciativa.id == iniciativa.id)
+        .options(
+            selectinload(Iniciativa.evaluaciones).selectinload(Evaluacion.resultado),
+            selectinload(Iniciativa.asignaciones).selectinload(AsignacionEvaluador.usuario),
+        )
+        .execution_options(populate_existing=True)
+    )
+    if recargada is None:
+        raise NoEncontrado("Iniciativa no encontrada")
+    return recargada

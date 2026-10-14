@@ -1,8 +1,8 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { api } from "../api/cliente";
+import { api, ErrorApi } from "../api/cliente";
 import type { Evaluacion as TipoEvaluacion } from "../api/tipos";
 import { EstadoBadge } from "../componentes/EstadoBadge";
 import { MatrizCriterios } from "../componentes/MatrizCriterios";
@@ -15,6 +15,19 @@ export function Evaluacion() {
     queryFn: () => api<TipoEvaluacion>(`/evaluaciones/${id}`),
   });
   const [elegida, setElegida] = useState<string | null>(null);
+  const navegar = useNavigate();
+  const consolidar = useMutation({
+    mutationFn: () =>
+      api(`/iniciativas/${e?.iniciativa.id}/transiciones`, {
+        metodo: "POST",
+        cuerpo: { hacia: "CONSOLIDADA" },
+      }),
+    onSuccess: async () => {
+      await clienteConsultas.invalidateQueries({ queryKey: ["evaluaciones", id] });
+      await clienteConsultas.invalidateQueries({ queryKey: ["iniciativas"] });
+      navegar(`/evaluaciones/${id}/resumen`);
+    },
+  });
 
   if (isPending) return <p className="cargando">Cargando evaluación…</p>;
   if (!e)
@@ -45,7 +58,14 @@ export function Evaluacion() {
         <EstadoBadge estado={e.iniciativa.estado} />
       </header>
 
-      {e.puede_gestionar && (
+      {e.estado !== "ABIERTA" && (
+        <p className="aviso exito">
+          Evaluación consolidada.{" "}
+          <Link to={`/evaluaciones/${e.id}/resumen`}>Ver el resumen ejecutivo</Link>
+        </p>
+      )}
+
+      {e.puede_gestionar && e.estado === "ABIERTA" && (
         <section className="tarjeta" aria-labelledby="titulo-avance">
           <h2 id="titulo-avance">Avance de la evaluación</h2>
           <table className="tabla">
@@ -78,6 +98,20 @@ export function Evaluacion() {
               ? `${pendientes.length} criterios pendientes para consolidar.`
               : "Sin pendientes: la evaluación se puede consolidar."}
           </p>
+          <div className="acciones">
+            <button
+              type="button"
+              disabled={pendientes.length > 0 || consolidar.isPending}
+              onClick={() => consolidar.mutate()}
+            >
+              {consolidar.isPending ? "Consolidando…" : "Consolidar evaluación"}
+            </button>
+          </div>
+          {consolidar.error instanceof ErrorApi && (
+            <p className="mensaje-error" role="alert">
+              {consolidar.error.detalle}
+            </p>
+          )}
           {pendientes.some(([, motivo]) => motivo.startsWith("Divergencia")) && (
             <ul>
               {pendientes

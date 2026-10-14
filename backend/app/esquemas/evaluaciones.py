@@ -2,12 +2,17 @@ import uuid
 from datetime import datetime
 from typing import Annotated
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.dominio.motor_decision import puntaje_criterio
+from app.dominio.motor_decision import Resultado, puntaje_criterio
 from app.esquemas.iniciativas import UsuarioBreve
 from app.esquemas.marco import NivelSalida
-from app.modelos.evaluaciones import Calificacion, ComentarioDivergencia, EstadoEvaluacion
+from app.modelos.evaluaciones import (
+    Calificacion,
+    ComentarioDivergencia,
+    EstadoEvaluacion,
+    ResultadoConsolidado,
+)
 from app.modelos.evaluaciones import OrigenCalificacion as Origen
 from app.modelos.iniciativas import EstadoIniciativa
 from app.modelos.marco import TipoCalculo
@@ -205,3 +210,85 @@ class DivergenciaSalida(BaseModel):
     dimension: str
     niveles: list[int]
     comentada: bool
+
+
+class ResultadoSalida(BaseModel):
+    """Resumen ejecutivo de una evaluación consolidada (FR-017)."""
+
+    evaluacion_id: uuid.UUID
+    iniciativa: IniciativaBreve
+    version_marco: str
+    score_total: float
+    puntajes_dimension: dict[str, float]
+    puntajes_criterio: dict[str, float]
+    pesos: dict[str, float]
+    umbrales: dict[str, float]
+    nombres_dimension: dict[str, str]
+    resultado: Resultado
+    regla: str
+    regla_aplicada: str
+    dimensiones_implicadas: list[str]
+    fortalezas: list[str]
+    debilidades: list[str]
+    riesgos: list[str]
+    supuestos_criticos: list[str]
+    borrador_ia: bool
+    consolidado_en: datetime
+    consolidado_por: UsuarioBreve | None
+    puede_editar: bool
+
+    @classmethod
+    def construir(
+        cls, ctx: Contexto, r: ResultadoConsolidado, *, puede_editar: bool
+    ) -> "ResultadoSalida":
+        v, i = ctx.evaluacion.version_marco, ctx.iniciativa
+        return cls(
+            evaluacion_id=ctx.evaluacion.id,
+            iniciativa=IniciativaBreve(id=i.id, codigo=i.codigo, nombre=i.nombre, estado=i.estado),
+            version_marco=v.numero,
+            score_total=r.score_total,
+            # JSONB no conserva el orden de las claves: se devuelven en el orden del marco.
+            puntajes_dimension={d.codigo: r.puntajes_dimension[d.codigo] for d in v.dimensiones},
+            puntajes_criterio={
+                c.codigo: r.puntajes_criterio[c.codigo]
+                for d in v.dimensiones
+                for c in d.criterios
+                if c.codigo in r.puntajes_criterio
+            },
+            pesos={d.codigo: float(d.peso) for d in v.dimensiones},
+            umbrales={
+                "critico": float(v.umbral_critico),
+                "validar": float(v.umbral_validar),
+                "debil": float(v.umbral_debil),
+                "score_go": float(v.umbral_score_go),
+                "score_iterar": float(v.umbral_score_iterar),
+                "score_validar": float(v.umbral_score_validar),
+            },
+            nombres_dimension={d.codigo: d.nombre for d in v.dimensiones},
+            resultado=r.resultado,
+            regla=r.regla,
+            regla_aplicada=r.regla_aplicada,
+            dimensiones_implicadas=r.dimensiones_implicadas,
+            fortalezas=r.fortalezas,
+            debilidades=r.debilidades,
+            riesgos=r.riesgos,
+            supuestos_criticos=r.supuestos_criticos,
+            borrador_ia=r.borrador_ia,
+            consolidado_en=r.creado_en,
+            consolidado_por=UsuarioBreve.desde(r.consolidado_por),
+            puede_editar=puede_editar,
+        )
+
+
+Item = Annotated[str, Field(max_length=1000)]
+
+
+class ResumenEditar(BaseModel):
+    """Solo las listas del resumen; puntajes y resultado no se editan."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    fortalezas: list[Item] | None = Field(default=None, max_length=30)
+    debilidades: list[Item] | None = Field(default=None, max_length=30)
+    riesgos: list[Item] | None = Field(default=None, max_length=30)
+    supuestos_criticos: list[Item] | None = Field(default=None, max_length=30)

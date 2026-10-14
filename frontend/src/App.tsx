@@ -10,6 +10,7 @@ import { Inicio } from "./paginas/Inicio";
 import { Login } from "./paginas/Login";
 import { Marco } from "./paginas/Marco";
 import { NuevaIniciativa } from "./paginas/NuevaIniciativa";
+import { Resumen } from "./paginas/Resumen";
 
 export function App() {
   return (
@@ -28,6 +29,7 @@ export function App() {
         <Route path="iniciativas/:id" element={<DetalleIniciativa />} />
         <Route path="iniciativas/:id/ficha" element={<Ficha />} />
         <Route path="evaluaciones/:id" element={<Evaluacion />} />
+        <Route path="evaluaciones/:id/resumen" element={<Resumen />} />
         <Route path="marco" element={<Marco />} />
         <Route path="*" element={<p className="tarjeta">Página no encontrada.</p>} />
       </Route>

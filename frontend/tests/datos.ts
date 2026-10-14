@@ -66,6 +66,7 @@ export const INICIATIVA: IniciativaDetalle = {
   autor: { id: PM.id, nombre: PM.nombre },
   pm: null,
   creado_en: "2026-10-14T12:00:00Z",
+  resultado: null,
   problema: null,
   solucion_objetivo: null,
   segmento: null,

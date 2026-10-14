@@ -15,6 +15,7 @@ CAMPOS_RESUMEN = {
     "autor",
     "pm",
     "creado_en",
+    "resultado",
 }
 CAMPOS_DETALLE = CAMPOS_RESUMEN | {
     "problema",

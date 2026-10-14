@@ -63,23 +63,36 @@ respuestas que las pruebas de contrato verifican.
 | `POST /evaluaciones/{id}/dimensiones/{dimension}/enviar` | Envía la dimensión y publica sus calificaciones (422 con los criterios sin calificar; 409 si ya se envió) | evaluador asignado |
 | `GET /evaluaciones/{id}/divergencias` | `[{criterio, dimension, niveles, comentada}]` de las dimensiones que el usuario puede ver | visible |
 | `POST /evaluaciones/{id}/divergencias/{criterio}/comentarios` | `{texto}` → 201. 422 si el criterio no tiene una divergencia visible | evaluador de la dimensión o PM |
-| `GET /evaluaciones/{id}/resultado` | Resultado consolidado (404 antes de consolidar) | visible |
-| `PATCH /evaluaciones/{id}/resultado` | Edita fortalezas, debilidades, riesgos y supuestos | PM |
+| `GET /evaluaciones/{id}/resultado` | Resumen ejecutivo (404 antes de consolidar). Puntajes en el orden del marco | visible |
+| `PATCH /evaluaciones/{id}/resultado` | `{fortalezas?, debilidades?, riesgos?, supuestos_criticos?}` (listas de texto). Cualquier otro campo → 400: puntajes y resultado no se editan | PM |
 
 **Respuesta de `GET /evaluaciones/{id}/resultado`**
 ```json
 {
+  "evaluacion_id": "…",
+  "iniciativa": {"id": "…", "codigo": "INI-2026-0001", "nombre": "…", "estado": "CONSOLIDADA"},
+  "version_marco": "3.0",
   "score_total": 4.1667,
   "puntajes_dimension": {"MER": 4.2, "COM": 4.0, "FIN": 3.8, "TEC": 4.5, "CMP": 4.1, "ECO": 4.4},
-  "pesos": {"MER": 0.1667, "COM": 0.1667, "FIN": 0.1667, "TEC": 0.1667, "CMP": 0.1667, "ECO": 0.1667},
+  "puntajes_criterio": {"MER-01": 4.5, "…": 4.0},
+  "pesos": {"MER": 0.1667, "…": 0.1667},
+  "umbrales": {"critico": 2.0, "validar": 2.5, "debil": 3.0, "score_go": 4.0, "score_iterar": 3.0, "score_validar": 2.0},
+  "nombres_dimension": {"MER": "Mercado", "…": "…"},
   "resultado": "GO",
+  "regla": "R4",
   "regla_aplicada": "R4: score ≥ 4.0 y todas las dimensiones ≥ 3.0",
   "dimensiones_implicadas": [],
-  "version_marco": "3.0",
   "fortalezas": ["…"], "debilidades": ["…"], "riesgos": ["…"], "supuestos_criticos": ["…"],
-  "borrador_ia": true
+  "borrador_ia": false,
+  "consolidado_en": "2026-10-14T15:00:00Z",
+  "consolidado_por": {"id": "…", "nombre": "…"},
+  "puede_editar": true
 }
 ```
+
+La consolidación se hace con `POST /iniciativas/{id}/transiciones` `{hacia: "CONSOLIDADA"}`: 422 con `campos` =
+criterios pendientes (sin calificaciones enviadas o con divergencia sin comentar). El listado y el detalle de
+iniciativas incluyen `resultado` (de la evaluación actual, `null` si aún no se consolida).
 
 ## IA
 

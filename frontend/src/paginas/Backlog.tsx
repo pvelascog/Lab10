@@ -6,13 +6,16 @@ import {
   ESTADOS,
   NOMBRES_ESTADOS,
   NOMBRES_ORIGENES,
+  NOMBRES_RESULTADOS,
   ORIGENES,
+  RESULTADOS,
   type IniciativaResumen,
 } from "../api/tipos";
 import { EstadoBadge } from "../componentes/EstadoBadge";
+import { ResultadoBadge } from "../componentes/ResultadoBadge";
 import { formatearFecha } from "../utilidades/fechas";
 
-const FILTROS = ["estado", "origen", "desde", "hasta", "orden"] as const;
+const FILTROS = ["estado", "origen", "resultado", "desde", "hasta", "orden"] as const;
 
 export function Backlog() {
   // Los filtros viven en la URL para poder compartir o recargar la vista.
@@ -66,6 +69,20 @@ export function Backlog() {
           </select>
         </label>
         <label>
+          Resultado
+          <select
+            value={filtros.resultado ?? ""}
+            onChange={(e) => cambiar("resultado", e.target.value)}
+          >
+            <option value="">Todos</option>
+            {RESULTADOS.map((r) => (
+              <option key={r} value={r}>
+                {NOMBRES_RESULTADOS[r]}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
           Desde
           <input
             type="date"
@@ -106,6 +123,7 @@ export function Backlog() {
                 <th>Iniciativa</th>
                 <th>Origen</th>
                 <th>Estado</th>
+                <th>Resultado</th>
                 <th>Registrada por</th>
                 <th>Fecha</th>
               </tr>
@@ -120,6 +138,13 @@ export function Backlog() {
                   <td>{NOMBRES_ORIGENES[i.origen]}</td>
                   <td>
                     <EstadoBadge estado={i.estado} />
+                  </td>
+                  <td>
+                    {i.resultado ? (
+                      <ResultadoBadge resultado={i.resultado} />
+                    ) : (
+                      <span className="texto-secundario">—</span>
+                    )}
                   </td>
                   <td>{i.autor.nombre}</td>
                   <td>{formatearFecha(i.creado_en)}</td>

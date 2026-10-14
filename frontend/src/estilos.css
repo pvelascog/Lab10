@@ -8,9 +8,12 @@
   --primario-texto: #ffffff;
   --error: #b42318;
   --go: #1b7a3d;
-  --iterar: #b7791f;
+  --iterar: #8a5a12; /* 5.9:1 con texto blanco (AA) */
   --validar: #c05621;
   --nogo: #b42318;
+  /* Tonos para texto de estado (en oscuro se aclaran; los fondos de las insignias no cambian). */
+  --iterar-texto: var(--iterar);
+  --nogo-texto: var(--nogo);
   --radio: 8px;
   font-family:
     system-ui,
@@ -33,6 +36,8 @@
     --primario: #6ea8ff;
     --primario-texto: #0b1220;
     --error: #ff8a80;
+    --iterar-texto: #f0b45a;
+    --nogo-texto: #ff8a80;
   }
 }
 
@@ -43,6 +48,15 @@
 body {
   margin: 0;
   background: var(--fondo);
+}
+
+a {
+  color: var(--primario);
+}
+
+.numero {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 h1,
@@ -578,8 +592,8 @@ label small {
 }
 
 .etiqueta.alerta {
-  color: var(--iterar);
-  border-color: var(--iterar);
+  color: var(--iterar-texto);
+  border-color: var(--iterar-texto);
 }
 
 .niveles-opciones {
@@ -653,4 +667,83 @@ label small {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* Resumen ejecutivo */
+.resultado.grande {
+  font-size: 1.15rem;
+  padding: 0.6rem 1rem;
+  min-width: 11rem;
+}
+
+.resultado-principal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.resultado-principal > div {
+  display: grid;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 260px;
+}
+
+.score {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.score strong {
+  font-size: 1.6rem;
+}
+
+.rejilla-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.radar {
+  margin: 0;
+  min-width: 0;
+}
+
+.radar figcaption {
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.tooltip-grafico {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  color: var(--texto);
+  font-size: 0.85rem;
+}
+
+.rejilla-listas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.rejilla-listas .tarjeta {
+  margin: 0;
+}
+
+.tabla tr.implicada th,
+.tabla tr.implicada td {
+  font-weight: 600;
+}
+
+.etiqueta.critica {
+  color: var(--nogo-texto);
+  border-color: var(--nogo-texto);
 }

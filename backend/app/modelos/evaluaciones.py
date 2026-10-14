@@ -8,15 +8,18 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     Enum,
+    Float,
     ForeignKey,
     String,
     Text,
     UniqueConstraint,
     func,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, ConFechas, ConId
+from app.dominio.motor_decision import Resultado
 from app.modelos.marco import Criterio, VersionMarco
 from app.modelos.usuarios import Usuario
 
@@ -68,6 +71,9 @@ class Evaluacion(ConId, ConFechas, Base):
         cascade="all, delete-orphan",
         lazy="selectin",
         order_by="ComentarioDivergencia.creado_en",
+    )
+    resultado: Mapped["ResultadoConsolidado | None"] = relationship(
+        cascade="all, delete-orphan", lazy="selectin", uselist=False
     )
 
 
@@ -121,3 +127,31 @@ class ComentarioDivergencia(ConId, ConFechas, Base):
     texto: Mapped[str] = mapped_column(Text)
 
     autor: Mapped[Usuario] = relationship(lazy="selectin")
+
+
+class ResultadoConsolidado(ConId, ConFechas, Base):
+    """Fotografía de la evaluación al consolidar (HU4). Los puntajes y el resultado no cambian;
+    el PM solo edita las listas del resumen ejecutivo."""
+
+    __tablename__ = "resultado_consolidado"
+
+    evaluacion_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("evaluacion.id", ondelete="CASCADE"), unique=True
+    )
+    score_total: Mapped[float] = mapped_column(Float)
+    puntajes_dimension: Mapped[dict[str, float]] = mapped_column(JSONB)
+    puntajes_criterio: Mapped[dict[str, float]] = mapped_column(JSONB)
+    resultado: Mapped[Resultado] = mapped_column(
+        Enum(Resultado, name="resultado", native_enum=False, length=10), index=True
+    )
+    regla: Mapped[str] = mapped_column(String(3))
+    regla_aplicada: Mapped[str] = mapped_column(Text)
+    dimensiones_implicadas: Mapped[list[str]] = mapped_column(JSONB)
+    fortalezas: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    debilidades: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    riesgos: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    supuestos_criticos: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    borrador_ia: Mapped[bool] = mapped_column(default=False)
+    consolidado_por_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("usuario.id"))
+
+    consolidado_por: Mapped[Usuario | None] = relationship(lazy="selectin")
