@@ -143,9 +143,12 @@ Los umbrales (2.0, 2.5, 3.0, 4.0 y el umbral de divergencia) se leen de la versi
 
 ### Reglas de visibilidad (FR-010b, FR-027a)
 
-- Un evaluador guarda calificaciones en borrador y **envía** cada dimensión asignada.
-- La API devuelve las calificaciones de otros evaluadores de una dimensión solo si quien consulta ya envió la suya
-  para esa dimensión, o si tiene rol PM, Comité o Administrador y la evaluación ya fue consolidada.
+- Un evaluador guarda calificaciones en borrador y **envía** cada dimensión asignada; al enviar, sus calificaciones
+  quedan **publicadas**. Los borradores solo los ve su autor.
+- Un evaluador asignado a una dimensión ve las calificaciones publicadas de los demás solo después de enviar la suya.
+- Quien tiene rol PM, Comité o Administrador y **no** evalúa esa dimensión ve las publicadas (para supervisar el avance
+  y comentar divergencias). Si también la evalúa, aplica la regla anterior.
+- Al consolidar, todas quedan visibles para quien pueda ver la iniciativa.
 - Cada consulta de iniciativa filtra por: autor, evaluador asignado, o rol con visión de portafolio.
 
 ### Recomendación de evaluadores (HU10, FR-010c)

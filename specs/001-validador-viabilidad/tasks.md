@@ -119,20 +119,20 @@
 
 ### Pruebas HU3
 
-- [ ] T045 [P] [HU3] Pruebas unitarias: promedio por criterio, divergencia con umbral 2, normalización de Recurrencia en `backend/tests/unit/test_calificaciones.py`
-- [ ] T046 [P] [HU3] Prueba de integración: calificación sin justificación rechazada, evaluador no asignado (403), Recurrencia fuera de {1, 3, 5} (400) en `backend/tests/integration/test_calificar.py`
-- [ ] T047 [P] [HU3] Prueba de integración de **calificación a ciegas**: no ve calificaciones ajenas antes de enviar la dimensión; sí las ve después; no puede editar tras enviar en `backend/tests/integration/test_calificacion_ciegas.py`
-- [ ] T048 [P] [HU3] Prueba de integración de divergencias: se detectan y bloquean la consolidación hasta comentarlas en `backend/tests/integration/test_divergencias.py`
+- [x] T045 [P] [HU3] Pruebas unitarias: promedio por criterio, divergencia con umbral 2, normalización de Recurrencia en `backend/tests/unit/test_calificaciones.py`
+- [x] T046 [P] [HU3] Prueba de integración: calificación sin justificación rechazada, evaluador no asignado (403), Recurrencia fuera de {1, 3, 5} (400) en `backend/tests/integration/test_calificar.py`
+- [x] T047 [P] [HU3] Prueba de integración de **calificación a ciegas**: no ve calificaciones ajenas antes de enviar la dimensión; sí las ve después; no puede editar tras enviar en `backend/tests/integration/test_calificacion_ciegas.py`
+- [x] T048 [P] [HU3] Prueba de integración de divergencias: se detectan y bloquean la consolidación hasta comentarlas en `backend/tests/integration/test_divergencias.py`
 
 ### Implementación HU3
 
-- [ ] T049 [P] [HU3] Modelos `evaluacion`, `calificacion`, `envio_dimension`, `comentario_divergencia` en `backend/app/modelos/evaluaciones.py` y migración
-- [ ] T050 [P] [HU3] Funciones puras `puntaje_criterio`, `divergencias`, `normalizar_recurrencia` en `backend/app/dominio/motor_decision.py`
-- [ ] T051 [HU3] Servicio de evaluación: creación al pasar a `EN_EVALUACION` (versión vigente del marco), borradores, envío por dimensión, avance por dimensión y evaluador en `backend/app/servicios/evaluaciones.py`
-- [ ] T052 [HU3] Reglas de visibilidad de calificaciones (FR-010b) en `backend/app/servicios/visibilidad.py`
-- [ ] T053 [HU3] Rutas de calificaciones, envío de dimensión y divergencias de `contracts/api.md` en `backend/app/api/evaluaciones.py`
-- [ ] T054 [P] [HU3] Componente MatrizCriterios: rúbrica por nivel, justificación obligatoria, borrador y envío por dimensión en `frontend/src/componentes/MatrizCriterios.tsx`
-- [ ] T055 [P] [HU3] Página Evaluación con avance y divergencias en `frontend/src/paginas/Evaluacion.tsx`
+- [x] T049 [P] [HU3] Modelos `evaluacion`, `calificacion`, `envio_dimension`, `comentario_divergencia` en `backend/app/modelos/evaluaciones.py` y migración
+- [x] T050 [P] [HU3] Funciones puras `puntaje_criterio`, `divergencias`, `normalizar_recurrencia` en `backend/app/dominio/motor_decision.py`
+- [x] T051 [HU3] Servicio de evaluación: creación al pasar a `EN_EVALUACION` (versión vigente del marco), borradores, envío por dimensión, avance por dimensión y evaluador en `backend/app/servicios/evaluaciones.py`
+- [x] T052 [HU3] Reglas de visibilidad de calificaciones (FR-010b) en `backend/app/servicios/visibilidad.py`
+- [x] T053 [HU3] Rutas de calificaciones, envío de dimensión y divergencias de `contracts/api.md` en `backend/app/api/evaluaciones.py`
+- [x] T054 [P] [HU3] Componente MatrizCriterios: rúbrica por nivel, justificación obligatoria, borrador y envío por dimensión en `frontend/src/componentes/MatrizCriterios.tsx`
+- [x] T055 [P] [HU3] Página Evaluación con avance y divergencias en `frontend/src/paginas/Evaluacion.tsx`
 
 **Punto de control**: HU1–HU3 funcionan juntas.
 

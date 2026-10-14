@@ -17,7 +17,7 @@ El proyecto avanza por fases; cada una produce un documento versionado en este r
 | 3. Clarificación | Sección "Clarificaciones" de la especificación | ✅ Sesión 2026-10-14 |
 | 4. Plan técnico | [`plan.md`](specs/001-validador-viabilidad/plan.md), [`research.md`](specs/001-validador-viabilidad/research.md), [`data-model.md`](specs/001-validador-viabilidad/data-model.md), [`contracts/api.md`](specs/001-validador-viabilidad/contracts/api.md) | ✅ Completo |
 | 5. Tareas | [`tasks.md`](specs/001-validador-viabilidad/tasks.md) – 114 tareas en 13 fases | ✅ Completo |
-| 6. Implementación | Código y pruebas | 🚧 Fases 1–4 de 13 completadas |
+| 6. Implementación | Código y pruebas | 🚧 Fases 1–5 de 13 completadas |
 
 ## Estructura
 

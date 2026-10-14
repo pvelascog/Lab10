@@ -29,7 +29,12 @@ CABECERA_CSRF = "X-CSRF-Token"
 METODOS_SEGUROS = {"GET", "HEAD", "OPTIONS"}
 ALGORITMO = "HS256"
 
-_hasher = PasswordHasher()
+# En pruebas se usan parámetros mínimos de Argon2 para que la suite sea rápida; nunca en producción.
+_hasher = (
+    PasswordHasher(time_cost=1, memory_cost=8, parallelism=1)
+    if obtener_configuracion().entorno == "pruebas"
+    else PasswordHasher()
+)
 # Hash de referencia para igualar el tiempo de respuesta cuando el correo no existe.
 HASH_FICTICIO = _hasher.hash(secrets.token_urlsafe(16))
 

@@ -33,3 +33,8 @@ def es_visible(usuario: Usuario, iniciativa: Iniciativa) -> bool:
         or usuario.id in (iniciativa.autor_id, iniciativa.pm_id)
         or any(a.usuario_id == usuario.id for a in iniciativa.asignaciones)
     )
+
+
+def gestiona(usuario: Usuario, iniciativa: Iniciativa) -> bool:
+    """El PM asignado a la iniciativa o cualquier usuario con rol PM."""
+    return usuario.tiene_rol(CodigoRol.PM) or iniciativa.pm_id == usuario.id

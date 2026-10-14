@@ -526,3 +526,131 @@ label small {
 .aviso ul {
   margin: 0.5rem 0 0;
 }
+
+/* Evaluación */
+.pestanas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.pestanas button {
+  background: var(--superficie);
+  color: var(--texto);
+  border-color: var(--borde);
+}
+
+.pestanas button.activa {
+  border-color: var(--primario);
+  color: var(--primario);
+  font-weight: 600;
+}
+
+.matriz {
+  display: grid;
+  gap: 1rem;
+}
+
+.criterio-evaluacion {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.criterio-evaluacion.con-divergencia {
+  border-color: var(--iterar);
+}
+
+.criterio-evaluacion header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.criterio-evaluacion h3 {
+  margin: 0;
+  font-size: 1rem;
+  margin-right: auto;
+}
+
+.etiqueta.alerta {
+  color: var(--iterar);
+  border-color: var(--iterar);
+}
+
+.niveles-opciones {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.niveles-opciones label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.niveles-opciones label.elegido {
+  border-color: var(--primario);
+  background: color-mix(in srgb, var(--primario) 8%, var(--superficie));
+}
+
+.niveles-opciones input {
+  width: auto;
+}
+
+.publicadas ul,
+.divergencia {
+  margin: 0;
+}
+
+.publicadas ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.divergencia {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: var(--radio);
+  background: color-mix(in srgb, var(--iterar) 10%, var(--superficie));
+}
+
+.divergencia blockquote {
+  margin: 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--iterar);
+}
+
+.enviar-dimension {
+  margin: 0;
+}
+
+.enviar-dimension .acciones {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

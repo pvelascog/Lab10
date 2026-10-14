@@ -91,3 +91,71 @@ IDEA = {
     "descripcion": "Plataforma para que los clientes registren y sigan sus reclamos en línea.",
     "origen": "CLIENTES",
 }
+
+
+FICHA = {
+    "problema": "Los clientes no saben en qué estado está su reclamo y llaman al call center.",
+    "solucion_objetivo": "Portal web de autogestión; objetivo: reducir 40 % las llamadas.",
+    "segmento": "Empresas de servicios con más de 10.000 clientes.",
+    "propuesta_valor": "Seguimiento en tiempo real integrado con Nexopus.",
+    "supuestos_clave": ["Los clientes prefieren la autogestión"],
+    "inversion_estimada": 120000,
+    "ingresos_esperados": 300000,
+    "flujo_mensual_neto": 10000,
+}
+
+CRITERIOS = {
+    "MER": ["MER-01", "MER-02", "MER-03", "MER-04", "MER-05"],
+    "COM": ["COM-01", "COM-02", "COM-03", "COM-04", "COM-05", "COM-06"],
+    "FIN": ["FIN-01", "FIN-02", "FIN-03", "FIN-04"],
+    "TEC": ["TEC-01", "TEC-02", "TEC-03", "TEC-04", "TEC-05"],
+    "CMP": ["CMP-01", "CMP-02", "CMP-03", "CMP-04"],
+    "ECO": ["ECO-01", "ECO-02", "ECO-03", "ECO-04"],
+}
+
+
+async def preparar_evaluacion(
+    pm: AsyncClient, evaluadores: dict[str, list[AsyncClient]] | None = None
+) -> tuple[str, str]:
+    """Iniciativa estructurada y en evaluación. Las dimensiones sin evaluador indicado se asignan
+    al PM. Devuelve (iniciativa_id, evaluacion_id)."""
+    evaluadores = evaluadores or {}
+    asignaciones = [
+        {"dimension": d, "usuario_id": await id_de(c)}
+        for d in CRITERIOS
+        for c in evaluadores.get(d, [pm])
+    ]
+    r = await pm.post("/api/v1/iniciativas", json={**IDEA, "asignaciones": asignaciones})
+    assert r.status_code == 201, r.text
+    iniciativa_id = r.json()["id"]
+    r = await pm.patch(
+        f"/api/v1/iniciativas/{iniciativa_id}", json={**FICHA, "pm_id": await id_de(pm)}
+    )
+    assert r.status_code == 200, r.text
+    for hacia in ("ESTRUCTURADA", "EN_EVALUACION"):
+        r = await pm.post(
+            f"/api/v1/iniciativas/{iniciativa_id}/transiciones", json={"hacia": hacia}
+        )
+        assert r.status_code == 200, r.text
+    return iniciativa_id, r.json()["evaluacion_actual_id"]
+
+
+async def calificar(
+    c: AsyncClient, evaluacion_id: str, criterio: str, nivel: int, justificacion: str = "Evidencia"
+):
+    return await c.put(
+        f"/api/v1/evaluaciones/{evaluacion_id}/calificaciones/{criterio}",
+        json={"nivel": nivel, "justificacion": justificacion},
+    )
+
+
+async def calificar_dimension(
+    c: AsyncClient, evaluacion_id: str, dimension: str, nivel: int = 4, enviar: bool = True
+) -> None:
+    for criterio in CRITERIOS[dimension]:
+        n = {1: 1, 2: 3, 3: 3, 4: 5, 5: 5}[nivel] if criterio == "COM-04" else nivel
+        r = await calificar(c, evaluacion_id, criterio, n)
+        assert r.status_code == 200, r.text
+    if enviar:
+        r = await c.post(f"/api/v1/evaluaciones/{evaluacion_id}/dimensiones/{dimension}/enviar")
+        assert r.status_code == 200, r.text

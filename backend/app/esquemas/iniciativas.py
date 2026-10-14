@@ -96,6 +96,7 @@ class IniciativaDetalle(IniciativaResumen):
     flujo_mensual_neto: float | None
     asignaciones: list[AsignacionSalida]
     posible_duplicado_de: DuplicadoSalida | None
+    evaluacion_actual_id: uuid.UUID | None
 
     @classmethod
     def construir(cls, i: Iniciativa, *, duplicado_visible: bool) -> "IniciativaDetalle":
@@ -131,6 +132,7 @@ class IniciativaDetalle(IniciativaResumen):
                 for a in i.asignaciones
             ],
             posible_duplicado_de=duplicado,
+            evaluacion_actual_id=i.evaluacion_actual.id if i.evaluacion_actual else None,
         )
 
 

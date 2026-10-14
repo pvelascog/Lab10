@@ -28,6 +28,7 @@ CAMPOS_DETALLE = CAMPOS_RESUMEN | {
     "flujo_mensual_neto",
     "asignaciones",
     "posible_duplicado_de",
+    "evaluacion_actual_id",
 }
 
 

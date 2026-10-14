@@ -46,9 +46,9 @@ respuestas que las pruebas de contrato verifican.
 |---------------|-------------|---------|
 | `GET /iniciativas?estado=&origen=&resultado=&desde=&hasta=&orden=` | Backlog visible para el usuario (FR-004, FR-027a). `orden` ∈ `-creado_en` (por defecto), `creado_en`, `nombre`, `-nombre`. El filtro `resultado` se habilita con la consolidación (HU4) | autenticado |
 | `POST /iniciativas` | `{nombre, descripcion, origen, asignaciones?: [{dimension, usuario_id}]}` → 201 con el detalle. `posible_duplicado_de = {id, codigo, nombre, similitud}` si la similitud trigram con otra iniciativa es ≥ 0.6; `id` y `nombre` son `null` cuando el usuario no puede ver esa iniciativa | autenticado |
-| `GET /iniciativas/{id}` | Ficha, estado, asignaciones, evaluaciones | visible |
+| `GET /iniciativas/{id}` | Ficha, estado, asignaciones y `evaluacion_actual_id` | visible |
 | `PATCH /iniciativas/{id}` | Edita la ficha; solo aplica los campos enviados (`null` borra). Solo en `IDENTIFICADA` o `ESTRUCTURADA` (409 en otro estado). `pm_id` solo lo asigna un PM y debe ser un usuario con rol PM. Inversión > 0 e ingresos ≥ 0 (400) | autor, PM de la iniciativa o rol PM |
-| `PUT /iniciativas/{id}/asignaciones` | `{asignaciones: [{dimension, usuario_id}]}` reemplaza los evaluadores por dimensión (solo en `IDENTIFICADA` o `ESTRUCTURADA`) | PM de la iniciativa o rol PM |
+| `PUT /iniciativas/{id}/asignaciones` | `{asignaciones: [{dimension, usuario_id}]}` reemplaza los evaluadores por dimensión (en `IDENTIFICADA`, `ESTRUCTURADA` o `EN_EVALUACION`). Durante la evaluación se descartan los borradores de quien se retira; 409 si se retira a quien ya envió | PM de la iniciativa o rol PM |
 | `GET /iniciativas/{id}/sugerencias-evaluadores` | Sugerencias por dimensión con su razón (HU10) | PM |
 | `POST /iniciativas/{id}/transiciones` | `{hacia: "ESTRUCTURADA" \| "EN_EVALUACION" \| …}` → 200 con el detalle; 409 si la transición no existe desde el estado actual; 422 con `campos` = lo que falta | según la tabla de estados |
 | `GET /iniciativas/{id}/calculos-financieros` | `{roi, nivel_roi, meses_recuperacion, nivel_recuperacion, faltantes}` calculados con los datos guardados de la ficha; `meses_recuperacion = null` con nivel 1 si el flujo mensual no es positivo | visible |
@@ -57,12 +57,12 @@ respuestas que las pruebas de contrato verifican.
 
 | Método y ruta | Descripción | Permiso |
 |---------------|-------------|---------|
-| `GET /evaluaciones/{id}` | Matriz con avance por dimensión y evaluador; las calificaciones ajenas solo si ya se envió la dimensión (FR-010b) | visible |
-| `PUT /evaluaciones/{id}/calificaciones/{criterio}` | `{nivel, justificacion, fuente?}` → guarda borrador propio | evaluador asignado a la dimensión |
-| `POST /evaluaciones/{id}/calificaciones/{criterio}/confirmar-sugerencia` | Convierte una sugerencia de IA o un cálculo en calificación propia, con justificación | evaluador asignado |
-| `POST /evaluaciones/{id}/dimensiones/{dimension}/enviar` | Envía la dimensión (422 si falta algún criterio) | evaluador asignado |
-| `GET /evaluaciones/{id}/divergencias` | Criterios con diferencia ≥ umbral | visible |
-| `POST /evaluaciones/{id}/divergencias/{criterio}/comentarios` | `{texto}` | evaluador asignado o PM |
+| `GET /evaluaciones/{id}` | Matriz por dimensión: mi calificación, avance por evaluador (`calificados`, `enviado`) y, si `ver_calificaciones`, las calificaciones **enviadas** de todos con promedio, divergencia y comentarios (FR-010b). `pendientes` (solo para quien gestiona) = criterios sin calificaciones enviadas o con divergencia sin comentar | visible |
+| `PUT /evaluaciones/{id}/calificaciones/{criterio}` | `{nivel, justificacion, fuente?, usa_calculo?}` → guarda o reemplaza el borrador propio. 400 si el nivel no existe en la rúbrica (Recurrencia: 1, 3, 5) o si `usa_calculo` no coincide con el nivel calculado de FIN-02/FIN-03; 409 si la dimensión ya fue enviada | evaluador asignado a la dimensión |
+| `POST /evaluaciones/{id}/calificaciones/{criterio}/confirmar-sugerencia` | Convierte una sugerencia de IA en calificación propia, con justificación (HU5). Los niveles calculados se confirman con `usa_calculo` en el `PUT` | evaluador asignado |
+| `POST /evaluaciones/{id}/dimensiones/{dimension}/enviar` | Envía la dimensión y publica sus calificaciones (422 con los criterios sin calificar; 409 si ya se envió) | evaluador asignado |
+| `GET /evaluaciones/{id}/divergencias` | `[{criterio, dimension, niveles, comentada}]` de las dimensiones que el usuario puede ver | visible |
+| `POST /evaluaciones/{id}/divergencias/{criterio}/comentarios` | `{texto}` → 201. 422 si el criterio no tiene una divergencia visible | evaluador de la dimensión o PM |
 | `GET /evaluaciones/{id}/resultado` | Resultado consolidado (404 antes de consolidar) | visible |
 | `PATCH /evaluaciones/{id}/resultado` | Edita fortalezas, debilidades, riesgos y supuestos | PM |
 

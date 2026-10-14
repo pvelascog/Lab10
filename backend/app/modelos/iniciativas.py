@@ -3,6 +3,7 @@
 import uuid
 from decimal import Decimal
 from enum import StrEnum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Enum, ForeignKey, Identity, Numeric, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
@@ -10,6 +11,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base, ConFechas, ConId
 from app.modelos.usuarios import Usuario
+
+if TYPE_CHECKING:
+    from app.modelos.evaluaciones import Evaluacion
 
 
 class EstadoIniciativa(StrEnum):
@@ -78,12 +82,19 @@ class Iniciativa(ConId, ConFechas, Base):
     posible_duplicado_de: Mapped["Iniciativa | None"] = relationship(
         remote_side="Iniciativa.id", lazy="selectin", join_depth=1
     )
+    evaluaciones: Mapped[list["Evaluacion"]] = relationship(
+        cascade="all, delete-orphan", lazy="selectin", order_by="Evaluacion.numero"
+    )
     asignaciones: Mapped[list["AsignacionEvaluador"]] = relationship(
         back_populates="iniciativa",
         cascade="all, delete-orphan",
         lazy="selectin",
         order_by="(AsignacionEvaluador.dimension_codigo, AsignacionEvaluador.creado_en)",
     )
+
+    @property
+    def evaluacion_actual(self) -> "Evaluacion | None":
+        return self.evaluaciones[-1] if self.evaluaciones else None
 
 
 class AsignacionEvaluador(ConId, ConFechas, Base):

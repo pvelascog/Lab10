@@ -157,6 +157,7 @@ export interface IniciativaDetalle extends IniciativaResumen {
     nombre: string | null;
     similitud: number;
   } | null;
+  evaluacion_actual_id: string | null;
 }
 
 export interface CalculosFinancieros {
@@ -180,3 +181,57 @@ export const CAMPOS_FICHA: Record<string, string> = {
   ingresos_esperados: "Ingresos esperados",
   flujo_mensual_neto: "Flujo mensual neto",
 };
+
+// --- Evaluación (HU3) ------------------------------------------------------------------------
+
+export type OrigenCalificacion =
+  "HUMANA" | "IA_SUGERIDA" | "IA_CONFIRMADA" | "CALCULADA_CONFIRMADA";
+
+export interface MiCalificacion {
+  nivel: number;
+  justificacion: string;
+  fuente: string | null;
+  origen: OrigenCalificacion;
+}
+
+export interface CalificacionPublicada extends MiCalificacion {
+  evaluador: UsuarioBreve;
+}
+
+export interface Comentario {
+  autor: UsuarioBreve;
+  texto: string;
+  creado_en: string;
+}
+
+export interface CriterioEvaluacion extends Criterio {
+  propuesta_calculada: number | null;
+  mi_calificacion: MiCalificacion | null;
+  calificaciones: CalificacionPublicada[] | null;
+  promedio: number | null;
+  divergencia: boolean | null;
+  comentarios: Comentario[] | null;
+}
+
+export interface DimensionEvaluacion {
+  codigo: string;
+  nombre: string;
+  peso: number;
+  soy_evaluador: boolean;
+  enviada_por_mi: boolean;
+  ver_calificaciones: boolean;
+  evaluadores: { usuario: UsuarioBreve; calificados: number; enviado: boolean }[];
+  criterios: CriterioEvaluacion[];
+}
+
+export interface Evaluacion {
+  id: string;
+  numero: number;
+  estado: "ABIERTA" | "CONSOLIDADA" | "DECIDIDA";
+  version_marco: string;
+  umbral_divergencia: number;
+  iniciativa: { id: string; codigo: string; nombre: string; estado: EstadoIniciativa };
+  puede_gestionar: boolean;
+  dimensiones: DimensionEvaluacion[];
+  pendientes: Record<string, string>;
+}

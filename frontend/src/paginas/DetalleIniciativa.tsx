@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { api, ErrorApi } from "../api/cliente";
 import { useMarcoVigente } from "../api/consultas";
@@ -7,7 +7,7 @@ import { CAMPOS_FICHA, NOMBRES_ORIGENES, type IniciativaDetalle } from "../api/t
 import { EstadoBadge } from "../componentes/EstadoBadge";
 import { useSesion } from "../estado/sesion";
 import { formatearFecha } from "../utilidades/fechas";
-import { puedeEditarFicha } from "../utilidades/permisos";
+import { gestiona, puedeEditarFicha } from "../utilidades/permisos";
 
 export function DetalleIniciativa() {
   const { id = "" } = useParams();
@@ -21,6 +21,20 @@ export function DetalleIniciativa() {
   } = useQuery({
     queryKey: ["iniciativas", id],
     queryFn: () => api<IniciativaDetalle>(`/iniciativas/${id}`),
+  });
+  const navegar = useNavigate();
+  const clienteConsultas = useQueryClient();
+  const iniciar = useMutation({
+    mutationFn: () =>
+      api<IniciativaDetalle>(`/iniciativas/${id}/transiciones`, {
+        metodo: "POST",
+        cuerpo: { hacia: "EN_EVALUACION" },
+      }),
+    onSuccess: async (nueva) => {
+      clienteConsultas.setQueryData(["iniciativas", id], nueva);
+      await clienteConsultas.invalidateQueries({ queryKey: ["iniciativas"] });
+      if (nueva.evaluacion_actual_id) navegar(`/evaluaciones/${nueva.evaluacion_actual_id}`);
+    },
   });
 
   if (isPending) return <p className="cargando">Cargando…</p>;
@@ -76,6 +90,39 @@ export function DetalleIniciativa() {
           <dd>{i.pm?.nombre ?? "Sin asignar"}</dd>
         </dl>
       </section>
+
+      {(i.evaluacion_actual_id || (i.estado === "ESTRUCTURADA" && gestiona(usuario, i))) && (
+        <section className="tarjeta" aria-labelledby="titulo-evaluacion">
+          <header className="encabezado-pagina">
+            <h2 id="titulo-evaluacion">Evaluación multidimensional</h2>
+            {i.evaluacion_actual_id ? (
+              <Link className="boton" to={`/evaluaciones/${i.evaluacion_actual_id}`}>
+                Ir a la evaluación
+              </Link>
+            ) : (
+              <button type="button" disabled={iniciar.isPending} onClick={() => iniciar.mutate()}>
+                Iniciar evaluación
+              </button>
+            )}
+          </header>
+          {!i.evaluacion_actual_id && (
+            <p className="texto-secundario sin-margen">
+              Cada dimensión necesita al menos un evaluador. Al iniciar, los evaluadores asignados
+              podrán calificar los criterios.
+            </p>
+          )}
+          {iniciar.error instanceof ErrorApi && (
+            <div className="aviso advertencia" role="alert">
+              <p className="sin-margen">{iniciar.error.detalle}</p>
+              <ul>
+                {Object.entries(iniciar.error.campos).map(([campo, motivo]) => (
+                  <li key={campo}>{motivo}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      )}
 
       <section className="tarjeta">
         <header className="encabezado-pagina">

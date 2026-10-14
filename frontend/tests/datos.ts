@@ -77,4 +77,65 @@ export const INICIATIVA: IniciativaDetalle = {
   flujo_mensual_neto: null,
   asignaciones: [],
   posible_duplicado_de: null,
+  evaluacion_actual_id: null,
 };
+
+import type { CriterioEvaluacion, DimensionEvaluacion, Evaluacion } from "../src/api/tipos";
+
+const criterioEval = (
+  codigo: string,
+  extra: Partial<CriterioEvaluacion> = {},
+): CriterioEvaluacion => ({
+  codigo,
+  nombre: `Criterio ${codigo}`,
+  definicion: "Definición",
+  escala_original: 5,
+  calculable: "NO",
+  niveles: [1, 2, 3, 4, 5].map((nivel) => ({ nivel, descripcion: `Nivel ${nivel} de ${codigo}` })),
+  propuesta_calculada: null,
+  mi_calificacion: null,
+  calificaciones: null,
+  promedio: null,
+  divergencia: null,
+  comentarios: null,
+  ...extra,
+});
+
+export function dimensionEval(extra: Partial<DimensionEvaluacion> = {}): DimensionEvaluacion {
+  return {
+    codigo: "MER",
+    nombre: "Mercado",
+    peso: 1 / 6,
+    soy_evaluador: true,
+    enviada_por_mi: false,
+    ver_calificaciones: false,
+    evaluadores: [{ usuario: { id: PM.id, nombre: PM.nombre }, calificados: 0, enviado: false }],
+    criterios: [criterioEval("MER-01"), criterioEval("MER-02")],
+    ...extra,
+  };
+}
+
+export { criterioEval };
+
+export function evaluacion(
+  dimensiones: DimensionEvaluacion[],
+  extra: Partial<Evaluacion> = {},
+): Evaluacion {
+  return {
+    id: "e1",
+    numero: 1,
+    estado: "ABIERTA",
+    version_marco: "3.0",
+    umbral_divergencia: 2,
+    iniciativa: {
+      id: "i1",
+      codigo: "INI-2026-0001",
+      nombre: "Portal de reclamos",
+      estado: "EN_EVALUACION",
+    },
+    puede_gestionar: false,
+    dimensiones,
+    pendientes: {},
+    ...extra,
+  };
+}

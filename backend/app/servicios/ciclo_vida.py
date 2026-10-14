@@ -1,10 +1,10 @@
 """Ciclo de vida de la iniciativa (data-model.md – Máquina de estados).
 
-Cada transición permitida declara sus condiciones. Las transiciones de etapas posteriores se
-agregan a la tabla a medida que se implementan sus historias de usuario (tasks.md).
+Cada transición permitida declara sus condiciones y, si corresponde, su efecto. Las transiciones de
+etapas posteriores se agregan a la tabla a medida que se implementan sus historias (tasks.md).
 """
 
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,8 +12,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.errores import Conflicto, ReglaIncumplida, SinPermiso
 from app.modelos.iniciativas import EstadoIniciativa as E
 from app.modelos.iniciativas import Iniciativa
-from app.modelos.usuarios import CodigoRol, Usuario
-from app.servicios import auditoria
+from app.modelos.usuarios import Usuario
+from app.servicios import auditoria, evaluaciones
+from app.servicios.visibilidad import gestiona
+
+__all__ = ["cambiar_estado", "exigir_editable", "faltantes_ficha", "gestiona"]
 
 OBLIGATORIO = "Obligatorio para estructurar la iniciativa"
 ESTADOS_EDITABLES = (E.IDENTIFICADA, E.ESTRUCTURADA)
@@ -29,11 +32,6 @@ NOMBRES = {
 }
 
 
-def gestiona(usuario: Usuario, iniciativa: Iniciativa) -> bool:
-    """El PM asignado a la iniciativa o cualquier usuario con rol PM."""
-    return usuario.tiene_rol(CodigoRol.PM) or iniciativa.pm_id == usuario.id
-
-
 def faltantes_ficha(i: Iniciativa) -> dict[str, str]:
     """Campos de la ficha que faltan para pasar a ESTRUCTURADA (HU2, escenario 2)."""
     faltan: dict[str, str] = {}
@@ -47,13 +45,34 @@ def faltantes_ficha(i: Iniciativa) -> dict[str, str]:
     return faltan
 
 
+async def _ficha_completa(_: AsyncSession, i: Iniciativa) -> dict[str, str]:
+    return faltantes_ficha(i)
+
+
+async def _lista_para_evaluar(sesion: AsyncSession, i: Iniciativa) -> dict[str, str]:
+    """Ficha completa y al menos un evaluador por dimensión del marco vigente (FR-010)."""
+    faltan = faltantes_ficha(i)
+    marco = await evaluaciones.marco_vigente(sesion)
+    con_evaluador = {a.dimension_codigo for a in i.asignaciones}
+    for d in marco.dimensiones:
+        if d.codigo not in con_evaluador:
+            faltan[d.codigo] = f"Asigne al menos un evaluador para {d.nombre}"
+    return faltan
+
+
+async def _iniciar_evaluacion(sesion: AsyncSession, _: Usuario, i: Iniciativa) -> None:
+    await evaluaciones.crear(sesion, i)
+
+
 @dataclass(frozen=True)
 class Transicion:
-    condiciones: Callable[[Iniciativa], dict[str, str]]
+    condiciones: Callable[[AsyncSession, Iniciativa], Awaitable[dict[str, str]]]
+    efecto: Callable[[AsyncSession, Usuario, Iniciativa], Awaitable[None]] | None = None
 
 
 TRANSICIONES: dict[tuple[E, E], Transicion] = {
-    (E.IDENTIFICADA, E.ESTRUCTURADA): Transicion(faltantes_ficha),
+    (E.IDENTIFICADA, E.ESTRUCTURADA): Transicion(_ficha_completa),
+    (E.ESTRUCTURADA, E.EN_EVALUACION): Transicion(_lista_para_evaluar, _iniciar_evaluacion),
 }
 
 
@@ -66,11 +85,13 @@ async def cambiar_estado(
     transicion = TRANSICIONES.get((desde, hacia))
     if transicion is None:
         raise Conflicto(f"No se puede pasar de «{NOMBRES[desde]}» a «{NOMBRES[hacia]}»")
-    faltan = transicion.condiciones(iniciativa)
+    faltan = await transicion.condiciones(sesion, iniciativa)
     if faltan:
         raise ReglaIncumplida(
             f"La iniciativa no cumple las condiciones para pasar a «{NOMBRES[hacia]}»", faltan
         )
+    if transicion.efecto is not None:
+        await transicion.efecto(sesion, usuario, iniciativa)
     iniciativa.estado = hacia
     await sesion.flush()
     await auditoria.registrar(

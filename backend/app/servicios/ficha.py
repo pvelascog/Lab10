@@ -7,11 +7,12 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.errores import DatosInvalidos, SinPermiso
-from app.modelos.iniciativas import AsignacionEvaluador, Iniciativa
+from app.errores import Conflicto, DatosInvalidos, SinPermiso
+from app.modelos.evaluaciones import EstadoEvaluacion
+from app.modelos.iniciativas import AsignacionEvaluador, EstadoIniciativa, Iniciativa
 from app.modelos.usuarios import CodigoRol, Rol, Usuario
 from app.servicios import auditoria
-from app.servicios.ciclo_vida import exigir_editable, gestiona
+from app.servicios.ciclo_vida import NOMBRES, exigir_editable, gestiona
 from app.servicios.iniciativas import AsignacionPedida, validar_asignaciones
 
 CAMPOS_TEXTO = (
@@ -86,6 +87,34 @@ async def editar_ficha(
     return iniciativa
 
 
+# Durante la evaluación el PM puede reasignar a quien no ha enviado su dimensión (caso límite HU3).
+ESTADOS_CON_ASIGNACION = (
+    EstadoIniciativa.IDENTIFICADA,
+    EstadoIniciativa.ESTRUCTURADA,
+    EstadoIniciativa.EN_EVALUACION,
+)
+
+
+def _retirar_de_la_evaluacion(
+    iniciativa: Iniciativa, retiradas: set[tuple[str, uuid.UUID]]
+) -> None:
+    """Descarta los borradores de quienes dejan de evaluar; impide retirar a quien ya envió."""
+    evaluacion = iniciativa.evaluacion_actual
+    if evaluacion is None or evaluacion.estado != EstadoEvaluacion.ABIERTA or not retiradas:
+        return
+    enviadas = {(e.dimension_codigo, e.evaluador_id) for e in evaluacion.envios}
+    if retiradas & enviadas:
+        raise Conflicto("No se puede retirar a un evaluador que ya envió su dimensión")
+    dimension_de = {
+        c.id: d.codigo for d in evaluacion.version_marco.dimensiones for c in d.criterios
+    }
+    evaluacion.calificaciones = [
+        c
+        for c in evaluacion.calificaciones
+        if (dimension_de[c.criterio_id], c.evaluador_id) not in retiradas
+    ]
+
+
 async def reemplazar_asignaciones(
     sesion: AsyncSession,
     usuario: Usuario,
@@ -94,11 +123,15 @@ async def reemplazar_asignaciones(
 ) -> Iniciativa:
     if not gestiona(usuario, iniciativa):
         raise SinPermiso("Solo el Product Manager puede asignar evaluadores")
-    exigir_editable(iniciativa)
+    if iniciativa.estado not in ESTADOS_CON_ASIGNACION:
+        raise Conflicto(
+            f"Los evaluadores no se pueden cambiar en estado «{NOMBRES[iniciativa.estado]}»"
+        )
     nuevas = await validar_asignaciones(sesion, pedidas)
 
     actuales = {(a.dimension_codigo, a.usuario_id): a for a in iniciativa.asignaciones}
     deseadas = {(a.dimension, a.usuario_id) for a in nuevas}
+    _retirar_de_la_evaluacion(iniciativa, set(actuales) - deseadas)
     # Se conservan las que no cambian para no violar la restricción única al reinsertarlas.
     iniciativa.asignaciones = [a for clave, a in actuales.items() if clave in deseadas] + [
         AsignacionEvaluador(dimension_codigo=d, usuario_id=u)
