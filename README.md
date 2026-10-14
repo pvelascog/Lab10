@@ -13,8 +13,8 @@ El proyecto avanza por fases; cada una produce un documento versionado en este r
 |------|-----------|--------|
 | 1. Constitución | [`.specify/memory/constitution.md`](.specify/memory/constitution.md) | ✅ v1.1.0 |
 | 2a. Marco de referencia | [`specs/001-validador-viabilidad/marco-nepxa.md`](specs/001-validador-viabilidad/marco-nepxa.md) | ✅ Extraído |
-| 2. Especificación | [`specs/001-validador-viabilidad/spec.md`](specs/001-validador-viabilidad/spec.md) | 📝 Borrador |
-| 3. Clarificación | Resolver `[NECESITA ACLARACIÓN]` en la especificación | ⏳ Pendiente |
+| 2. Especificación | [`specs/001-validador-viabilidad/spec.md`](specs/001-validador-viabilidad/spec.md) | ✅ Completa |
+| 3. Clarificación | Sección "Clarificaciones" de la especificación | ✅ Sesión 2026-10-14 |
 | 4. Plan técnico | `specs/001-validador-viabilidad/plan.md` | ⏳ Pendiente |
 | 5. Tareas | `specs/001-validador-viabilidad/tasks.md` | ⏳ Pendiente |
 | 6. Implementación | Código y pruebas | ⏳ Pendiente |
