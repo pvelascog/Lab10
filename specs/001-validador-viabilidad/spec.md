@@ -264,7 +264,7 @@ anteriores, para conformar más rápido equipos idóneos.
 - **FR-011**: El puntaje de una dimensión DEBE ser el promedio simple de sus criterios.
 - **FR-012**: El score total DEBE ser el promedio ponderado de las dimensiones; en la versión inicial todas pesan igual
   (1/6). Los pesos DEBEN ser configurables desde el propio sistema por el administrador del marco (FR-025).
-- **FR-013**: Los cálculos DEBEN usar los valores sin redondear; la presentación se muestra con 2 decimales.
+- **FR-013**: Los cálculos DEBEN usar los valores sin redondear; la presentación se muestra truncada (no redondeada) a 2 decimales.
 - **FR-014**: Una dimensión es **crítica** si su puntaje es < 2.0 y **débil** si es < 3.0.
 - **FR-015**: El sistema DEBE informar qué regla determinó el resultado recomendado.
 - **FR-016**: El resultado recomendado DEBE calcularse aplicando las reglas en este orden (la primera que se cumple prevalece):
@@ -365,9 +365,10 @@ anteriores, para conformar más rápido equipos idóneos.
 | C4 | Origen del benchmark | Búsqueda web ahora; fuente interna con RAG en una versión futura | FR-018 |
 | C5 | Autenticación | Inicio de sesión con cuentas propias y roles | FR-027, FR-027a |
 | C6 | Formato del reporte | Página web con exportación a PDF | FR-028 |
+| C7 | Stack técnico | Python + FastAPI, PostgreSQL, React; Claude para benchmark y recomendaciones | `plan.md` |
 
-Decisiones derivadas, tomadas para completar C3 (se pueden ajustar): umbral de divergencia de 2 puntos y
-calificación a ciegas hasta enviar la propia.
+Decisiones derivadas de C3, **confirmadas**: umbral de divergencia de 2 puntos y calificación a ciegas hasta
+enviar la propia.
 
 ## Lista de verificación de la especificación
 

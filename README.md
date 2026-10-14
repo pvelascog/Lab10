@@ -15,7 +15,7 @@ El proyecto avanza por fases; cada una produce un documento versionado en este r
 | 2a. Marco de referencia | [`specs/001-validador-viabilidad/marco-nepxa.md`](specs/001-validador-viabilidad/marco-nepxa.md) | ✅ Extraído |
 | 2. Especificación | [`specs/001-validador-viabilidad/spec.md`](specs/001-validador-viabilidad/spec.md) | ✅ Completa |
 | 3. Clarificación | Sección "Clarificaciones" de la especificación | ✅ Sesión 2026-10-14 |
-| 4. Plan técnico | `specs/001-validador-viabilidad/plan.md` | ⏳ Pendiente |
+| 4. Plan técnico | [`plan.md`](specs/001-validador-viabilidad/plan.md), [`research.md`](specs/001-validador-viabilidad/research.md), [`data-model.md`](specs/001-validador-viabilidad/data-model.md), [`contracts/api.md`](specs/001-validador-viabilidad/contracts/api.md) | ✅ Completo |
 | 5. Tareas | `specs/001-validador-viabilidad/tasks.md` | ⏳ Pendiente |
 | 6. Implementación | Código y pruebas | ⏳ Pendiente |
 
@@ -29,6 +29,15 @@ El proyecto avanza por fases; cada una produce un documento versionado en este r
 ├── specs/
 │   └── 001-validador-viabilidad/
 │       ├── marco-nepxa.md       # Dimensiones, rúbricas, modelo de decisión y flujo (fuente)
-│       └── spec.md              # Qué y por qué (sin tecnología)
+│       ├── spec.md              # Qué y por qué (sin tecnología)
+│       ├── plan.md              # Cómo: arquitectura, stack, pruebas, incrementos
+│       ├── research.md          # Decisiones técnicas y alternativas
+│       ├── data-model.md        # Entidades, reglas y máquina de estados
+│       └── contracts/api.md     # Contratos de la API REST
 └── README.md
 ```
+
+## Stack técnico
+
+Python 3.12 · FastAPI · PostgreSQL 16 · React 18 + Vite · API de Claude (benchmark con búsqueda web y recomendaciones) ·
+WeasyPrint (PDF) · Docker Compose.
